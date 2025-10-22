@@ -1,0 +1,15 @@
+{
+  "scripts": [
+    {
+      "id": "demo1",
+      "title": "Авто-фарм монет",
+      "description": "Автоматически собирает монеты в популярных играх Roblox",
+      "code": "loadstring(game:HttpGet(\"https://example.com/auto-farm.lua\"))()",
+      "author": "Gord",
+      "features": ["Авто-сбор", "Безопасность", "Настройки"],
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "updatedAt": "2024-01-15T10:00:00.000Z"
+    }
+  ],
+  "lastUpdated": "2024-01-15T10:00:00.000Z"
+}
