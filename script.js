@@ -1,13 +1,11 @@
 // ============================================================================
-// Gord Scripts — SCRIPT.JS (JavaLauncher Style)
-// Enhanced with data persistence and JavaLauncher animations
+// Gord Scripts — Enhanced Script Manager
+// Features: Persistent storage, shareable links, real-time updates
 // ============================================================================
 
-// Конфигурация
 const CONFIG = {
-    GITHUB_USER: 'Gord-Scripts',
-    REPO: 'gord-scripts.github.io',
-    SCRIPTS_FILE: 'scripts.json'
+    STORAGE_KEY: 'gordScriptsData',
+    SHARE_BASE_URL: window.location.origin + window.location.pathname
 };
 
 // Глобальные переменные
@@ -19,17 +17,15 @@ let currentTags = [];
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
     setupEventListeners();
+    checkUrlForScript();
 });
 
 async function initApp() {
     await loadScripts();
     renderScripts();
     updateStats();
-    
-    // Загрузка темы
     loadTheme();
     
-    // Проверяем авторизацию
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
@@ -37,23 +33,32 @@ async function initApp() {
     }
 }
 
+// Проверка URL для загрузки скрипта по ссылке
+function checkUrlForScript() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const scriptId = urlParams.get('script');
+    
+    if (scriptId) {
+        openScriptView(scriptId);
+        // Очищаем URL без перезагрузки страницы
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
 // Загрузка скриптов
 async function loadScripts() {
     try {
-        const url = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.REPO}/main/${CONFIG.SCRIPTS_FILE}`;
-        const response = await fetch(url);
-        
-        if (response.ok) {
-            const data = await response.json();
+        const savedData = localStorage.getItem(CONFIG.STORAGE_KEY);
+        if (savedData) {
+            const data = JSON.parse(savedData);
             scripts = data.scripts || [];
+            console.log('Скрипты загружены из localStorage:', scripts.length);
         } else {
-            // Если файла нет, создаем демо-данные
             await createDemoScripts();
         }
     } catch (error) {
         console.error('Ошибка загрузки скриптов:', error);
-        // Пробуем загрузить из localStorage
-        loadFromLocalStorage();
+        await createDemoScripts();
     }
 }
 
@@ -65,8 +70,6 @@ async function createDemoScripts() {
             title: "Авто-фарм монет",
             description: "Автоматический сбор монет в Brookhaven с настройкой интервалов",
             code: `-- Авто-фарм монет для Brookhaven
-loadstring(game:HttpGet("https://example.com/auto-farm.lua"))()
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
@@ -89,7 +92,8 @@ autoFarm()`,
             tags: ["авто-фарм", "монеты", "брукхейвен"],
             createdAt: new Date().toISOString(),
             views: 1250,
-            likes: 89
+            likes: 89,
+            downloads: 342
         },
         {
             id: generateId(),
@@ -116,7 +120,8 @@ Players.PlayerAdded:Connect(createESP)`,
             tags: ["ESP", "игроки", "видимость"],
             createdAt: new Date(Date.now() - 86400000).toISOString(),
             views: 890,
-            likes: 67
+            likes: 67,
+            downloads: 234
         }
     ];
     
@@ -127,62 +132,56 @@ Players.PlayerAdded:Connect(createESP)`,
 async function saveScripts() {
     const dataToSave = {
         scripts: scripts,
+        totalScripts: scripts.length,
+        totalViews: scripts.reduce((acc, script) => acc + (script.views || 0), 0),
         lastUpdated: new Date().toISOString()
     };
     
-    // Сохраняем в localStorage
-    localStorage.setItem('gordScriptsData', JSON.stringify(dataToSave));
-    
-    // В реальном приложении здесь был бы вызов GitHub API
+    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(dataToSave));
     console.log('Скрипты сохранены:', dataToSave);
     showNotification('Данные успешно сохранены!', 'success');
+    
+    // Обновляем статистику
+    updateStats();
 }
 
-// Загрузка из localStorage
-function loadFromLocalStorage() {
-    const savedData = localStorage.getItem('gordScriptsData');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        scripts = data.scripts || [];
-        showNotification('Данные загружены из локального хранилища', 'success');
-    } else {
-        createDemoScripts();
-    }
-}
-
-// Утилиты
+// Генерация ID
 function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 }
 
+// Утилиты
 function $(selector) {
     return document.querySelector(selector);
 }
 
 function showNotification(message, type = 'success') {
-    const notification = $('#notification');
-    const icon = $('#notificationIcon');
-    const text = $('#notificationText');
+    const notification = document.getElementById('notification');
+    const icon = document.getElementById('notificationIcon');
+    const text = document.getElementById('notificationText');
     
-    notification.className = `notification ${type}`;
-    icon.className = type === 'success' ? 'fas fa-check' : 'fas fa-exclamation-triangle';
-    text.textContent = message;
-    
-    notification.classList.add('show');
-    setTimeout(() => notification.classList.remove('show'), 3000);
+    if (notification && icon && text) {
+        notification.className = `notification ${type}`;
+        icon.className = type === 'success' ? 'fas fa-check' : 'fas fa-exclamation-triangle';
+        text.textContent = message;
+        
+        notification.classList.add('show');
+        setTimeout(() => notification.classList.remove('show'), 3000);
+    }
 }
 
 // Рендеринг скриптов
-function renderScripts() {
-    const scriptsGrid = $('#scriptsGrid');
+function renderScripts(filteredScripts = null) {
+    const scriptsGrid = document.getElementById('scriptsGrid');
+    const scriptsToRender = filteredScripts || scripts;
     
-    if (scripts.length === 0) {
+    if (scriptsToRender.length === 0) {
         scriptsGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📝</div>
-                <h3 style="margin-bottom: 1rem; font-family: var(--ff-heading);">СКРИПТОВ ПОКА НЕТ</h3>
-                <p style="color: var(--muted); margin-bottom: 2rem;">Будьте первым, кто загрузит скрипт!</p>
-                <button class="upload-btn" onclick="showUploadModal()">
+            <div class="no-scripts">
+                <div class="no-scripts-icon">📝</div>
+                <h3>СКРИПТОВ НЕ НАЙДЕНО</h3>
+                <p>Попробуйте изменить параметры поиска или загрузите первый скрипт!</p>
+                <button class="btn btn-primary" onclick="showUploadModal()">
                     <i class="fas fa-upload"></i>
                     ЗАГРУЗИТЬ СКРИПТ
                 </button>
@@ -191,7 +190,7 @@ function renderScripts() {
         return;
     }
     
-    scriptsGrid.innerHTML = scripts.map(script => `
+    scriptsGrid.innerHTML = scriptsToRender.map(script => `
         <div class="script-card" onclick="openScriptView('${script.id}')">
             <div class="script-header">
                 <h3 class="script-title">${script.title}</h3>
@@ -224,14 +223,26 @@ function renderScripts() {
                 </div>
             ` : ''}
             
+            <div class="script-stats">
+                <span class="stat">
+                    <i class="fas fa-eye"></i> ${script.views || 0}
+                </span>
+                <span class="stat">
+                    <i class="fas fa-heart"></i> ${script.likes || 0}
+                </span>
+                <span class="stat">
+                    <i class="fas fa-download"></i> ${script.downloads || 0}
+                </span>
+            </div>
+            
             <div class="script-actions">
                 <button class="btn btn-small" onclick="event.stopPropagation(); copyScript('${script.id}')">
                     <i class="fas fa-copy"></i>
                     КОПИРОВАТЬ
                 </button>
-                <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); openScriptView('${script.id}')">
-                    <i class="fas fa-eye"></i>
-                    ПРОСМОТР
+                <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); shareScript('${script.id}')">
+                    <i class="fas fa-share"></i>
+                    ПОДЕЛИТЬСЯ
                 </button>
             </div>
         </div>
@@ -257,15 +268,34 @@ function formatDate(dateString) {
 
 // Обновление статистики
 function updateStats() {
-    $('#scriptsCount').textContent = scripts.length;
-    const totalViews = scripts.reduce((acc, script) => acc + (script.views || 0), 0);
-    // Можно добавить больше статистики
+    const scriptsCount = document.getElementById('scriptsCount');
+    const usersCount = document.getElementById('registeredCount');
+    
+    if (scriptsCount) scriptsCount.textContent = scripts.length;
+    if (usersCount) {
+        // Простая логика подсчета "пользователей" - можно улучшить
+        const uniqueAuthors = [...new Set(scripts.map(script => script.author))];
+        usersCount.textContent = uniqueAuthors.length + 150; // Базовое число + авторы
+    }
+}
+
+// Поиск скриптов
+function searchScripts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const filteredScripts = scripts.filter(script => 
+        script.title.toLowerCase().includes(searchTerm) ||
+        script.description.toLowerCase().includes(searchTerm) ||
+        script.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+        script.game.toLowerCase().includes(searchTerm)
+    );
+    
+    renderScripts(filteredScripts);
 }
 
 // Управление тегами
 function addTag() {
-    const tagInput = $('#tagInput');
-    const tag = tagInput.value.trim();
+    const tagInput = document.getElementById('tagInput');
+    const tag = tagInput.value.trim().toLowerCase();
     
     if (tag && !currentTags.includes(tag)) {
         currentTags.push(tag);
@@ -280,34 +310,47 @@ function removeTag(index) {
 }
 
 function renderTags() {
-    const tagsList = $('#tagsList');
-    tagsList.innerHTML = currentTags.map((tag, index) => `
-        <span class="tag">
-            ${tag}
-            <button type="button" onclick="removeTag(${index})" style="background: none; border: none; color: inherit; margin-left: 4px; cursor: pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-        </span>
-    `).join('');
+    const tagsList = document.getElementById('tagsList');
+    if (tagsList) {
+        tagsList.innerHTML = currentTags.map((tag, index) => `
+            <span class="tag">
+                ${tag}
+                <button type="button" onclick="removeTag(${index})" class="tag-remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </span>
+        `).join('');
+    }
 }
 
 // Модальные окна
 function showUploadModal() {
     if (!currentUser) {
         showNotification('Для загрузки скриптов необходимо войти в систему', 'error');
+        showLoginModal();
         return;
     }
     
     currentTags = [];
-    $('#uploadForm').reset();
-    $('#tagsList').innerHTML = '';
-    $('#uploadModal').classList.add('active');
-    $('#modal-overlay').classList.add('active');
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) uploadForm.reset();
+    
+    const tagsList = document.getElementById('tagsList');
+    if (tagsList) tagsList.innerHTML = '';
+    
+    const uploadModal = document.getElementById('uploadModal');
+    const overlay = document.getElementById('modal-overlay');
+    
+    if (uploadModal) uploadModal.classList.add('active');
+    if (overlay) overlay.classList.add('active');
 }
 
 function closeUploadModal() {
-    $('#uploadModal').classList.remove('active');
-    $('#modal-overlay').classList.remove('active');
+    const uploadModal = document.getElementById('uploadModal');
+    const overlay = document.getElementById('modal-overlay');
+    
+    if (uploadModal) uploadModal.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
 }
 
 function openScriptView(scriptId) {
@@ -316,36 +359,61 @@ function openScriptView(scriptId) {
 
     // Увеличиваем счетчик просмотров
     script.views = (script.views || 0) + 1;
+    saveScripts();
     
-    $('#viewScriptTitle').textContent = script.title;
-    $('#viewScriptDescription').textContent = script.description;
-    $('#viewScriptCode').textContent = script.code;
+    // Обновляем модальное окно просмотра
+    const title = document.getElementById('viewScriptTitle');
+    const description = document.getElementById('viewScriptDescription');
+    const code = document.getElementById('viewScriptCode');
+    const meta = document.getElementById('viewScriptMeta');
+    const tags = document.getElementById('viewScriptTags');
     
-    $('#viewScriptMeta').innerHTML = `
-        <div class="script-meta">
-            <span class="script-author">
-                <i class="fas fa-user"></i>
-                ${script.author}
-            </span>
-            <span class="script-date">
-                <i class="fas fa-calendar"></i>
-                ${formatDate(script.createdAt)}
-            </span>
-            <span class="script-views">
-                <i class="fas fa-eye"></i>
-                ${script.views}
-            </span>
-        </div>
-    `;
-
-    $('#scriptViewModal').classList.add('active');
-    $('#modal-overlay').classList.add('active');
-    saveScripts(); // Сохраняем обновленные просмотры
+    if (title) title.textContent = script.title;
+    if (description) description.textContent = script.description;
+    if (code) code.textContent = script.code;
+    
+    if (meta) {
+        meta.innerHTML = `
+            <div class="script-meta">
+                <span class="script-author">
+                    <i class="fas fa-user"></i>
+                    ${script.author}
+                </span>
+                <span class="script-date">
+                    <i class="fas fa-calendar"></i>
+                    ${formatDate(script.createdAt)}
+                </span>
+                <span class="script-views">
+                    <i class="fas fa-eye"></i>
+                    ${script.views}
+                </span>
+                <span class="script-game">
+                    <i class="fas fa-gamepad"></i>
+                    ${script.game}
+                </span>
+            </div>
+        `;
+    }
+    
+    if (tags && script.tags) {
+        tags.innerHTML = script.tags.map(tag => `
+            <span class="tag">${tag}</span>
+        `).join('');
+    }
+    
+    const scriptViewModal = document.getElementById('scriptViewModal');
+    const overlay = document.getElementById('modal-overlay');
+    
+    if (scriptViewModal) scriptViewModal.classList.add('active');
+    if (overlay) overlay.classList.add('active');
 }
 
 function closeScriptViewModal() {
-    $('#scriptViewModal').classList.remove('active');
-    $('#modal-overlay').classList.remove('active');
+    const scriptViewModal = document.getElementById('scriptViewModal');
+    const overlay = document.getElementById('modal-overlay');
+    
+    if (scriptViewModal) scriptViewModal.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
 }
 
 // Действия со скриптами
@@ -356,85 +424,149 @@ function copyScript(scriptId) {
     navigator.clipboard.writeText(script.code).then(() => {
         showNotification('Код скрипта скопирован в буфер обмена!');
     }).catch(() => {
-        showNotification('Ошибка копирования', 'error');
+        // Fallback для старых браузеров
+        const textArea = document.createElement('textarea');
+        textArea.value = script.code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('Код скрипта скопирован в буфер обмена!');
     });
 }
 
+function shareScript(scriptId) {
+    const script = scripts.find(s => s.id === scriptId);
+    if (!script) return;
+    
+    const shareUrl = `${CONFIG.SHARE_BASE_URL}?script=${scriptId}`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: script.title,
+            text: script.description,
+            url: shareUrl
+        });
+    } else {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            showNotification('Ссылка на скрипт скопирована в буфер обмена!');
+        }).catch(() => {
+            // Fallback
+            const textArea = document.createElement('textarea');
+            textArea.value = shareUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showNotification('Ссылка на скрипт скопирована в буфер обмена!');
+        });
+    }
+}
+
 function copyScriptCode() {
-    const code = $('#viewScriptCode').textContent;
-    navigator.clipboard.writeText(code).then(() => {
+    const code = document.getElementById('viewScriptCode');
+    if (!code) return;
+    
+    navigator.clipboard.writeText(code.textContent).then(() => {
         showNotification('Код скопирован в буфер обмена!');
-    }).catch(() => {
-        showNotification('Ошибка копирования', 'error');
     });
 }
 
 function downloadScript() {
-    const title = $('#viewScriptTitle').textContent;
-    const code = $('#viewScriptCode').textContent;
+    const title = document.getElementById('viewScriptTitle');
+    const code = document.getElementById('viewScriptCode');
     
-    const blob = new Blob([code], { type: 'text/plain' });
+    if (!title || !code) return;
+
+    const script = scripts.find(s => s.title === title.textContent);
+    if (script) {
+        script.downloads = (script.downloads || 0) + 1;
+        saveScripts();
+    }
+    
+    const blob = new Blob([code.textContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     
     a.href = url;
-    a.download = `${title.replace(/[^a-z0-9]/gi, '_')}.lua`;
+    a.download = `${title.textContent.replace(/[^a-z0-9]/gi, '_')}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showNotification(`Скрипт "${title}" скачан!`);
+    showNotification(`Скрипт "${title.textContent}" скачан!`);
 }
 
 // Загрузка скрипта
 function uploadScript() {
-    const title = $('#scriptTitle').value.trim();
-    const description = $('#scriptDescription').value.trim();
-    const code = $('#scriptCode').value.trim();
+    const title = document.getElementById('scriptTitle');
+    const description = document.getElementById('scriptDescription');
+    const code = document.getElementById('scriptCode');
+    const game = document.getElementById('scriptGame');
     
-    if (!title || !description || !code) {
+    if (!title || !description || !code || !game) return;
+    
+    const titleValue = title.value.trim();
+    const descriptionValue = description.value.trim();
+    const codeValue = code.value.trim();
+    const gameValue = game.value;
+    
+    if (!titleValue || !descriptionValue || !codeValue || !gameValue) {
         showNotification('Заполните все обязательные поля', 'error');
         return;
     }
 
     const newScript = {
         id: generateId(),
-        title,
-        description,
-        code,
+        title: titleValue,
+        description: descriptionValue,
+        code: codeValue,
         author: currentUser.username,
-        game: "Universal",
+        game: gameValue,
         tags: [...currentTags],
         createdAt: new Date().toISOString(),
         views: 0,
-        likes: 0
+        likes: 0,
+        downloads: 0
     };
 
     scripts.unshift(newScript);
     saveScripts();
     renderScripts();
-    updateStats();
     closeUploadModal();
     
-    showNotification(`Скрипт "${title}" успешно загружен!`);
+    showNotification(`Скрипт "${titleValue}" успешно загружен!`);
+    
+    // Автоматически генерируем ссылку для распространения
+    setTimeout(() => {
+        shareScript(newScript.id);
+    }, 1000);
 }
 
-// Авторизация (упрощенная)
+// Авторизация
 function showLoginModal() {
     const username = prompt('Введите имя пользователя:');
-    if (username) {
-        currentUser = { username: username.trim(), role: 'user' };
+    if (username && username.trim()) {
+        currentUser = { 
+            username: username.trim(), 
+            role: 'user',
+            joinedAt: new Date().toISOString()
+        };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateAuthUI();
-        showNotification(`Добро пожаловать, ${username}!`);
+        showNotification(`Добро пожаловать, ${username.trim()}!`);
     }
 }
 
 function showRegisterModal() {
     const username = prompt('Введите имя пользователя для регистрации:');
     if (username && username.length >= 3) {
-        currentUser = { username: username.trim(), role: 'user' };
+        currentUser = { 
+            username: username.trim(), 
+            role: 'user',
+            joinedAt: new Date().toISOString()
+        };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateAuthUI();
         showNotification('Регистрация успешна! Добро пожаловать!');
@@ -444,11 +576,11 @@ function showRegisterModal() {
 }
 
 function updateAuthUI() {
-    const authButtons = $('.auth-buttons');
-    if (currentUser) {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (authButtons && currentUser) {
         authButtons.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: var(--muted); font-size: 12px;">Привет, ${currentUser.username}!</span>
+            <div class="user-info">
+                <span class="user-greeting">Привет, ${currentUser.username}!</span>
                 <button class="btn btn-small" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                     ВЫЙТИ
@@ -461,7 +593,19 @@ function updateAuthUI() {
 function logout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
-    updateAuthUI();
+    const authButtons = document.querySelector('.auth-buttons');
+    if (authButtons) {
+        authButtons.innerHTML = `
+            <button class="btn btn-outline" onclick="showLoginModal()">
+                <i class="fas fa-sign-in-alt"></i>
+                Войти
+            </button>
+            <button class="btn btn-primary" onclick="showRegisterModal()">
+                <i class="fas fa-user-plus"></i>
+                Регистрация
+            </button>
+        `;
+    }
     showNotification('Вы вышли из системы');
 }
 
@@ -469,43 +613,64 @@ function logout() {
 function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     const body = document.body;
-    const icon = $('#themeToggle i');
+    const icon = document.querySelector('#themeToggle i');
     
     if (savedTheme === 'light') {
         body.classList.add('theme-light');
-        icon.className = 'fas fa-sun';
+        if (icon) icon.className = 'fas fa-sun';
     } else {
         body.classList.add('theme-dark');
-        icon.className = 'fas fa-moon';
+        if (icon) icon.className = 'fas fa-moon';
     }
 }
 
-$('#themeToggle').addEventListener('click', function() {
-    const body = document.body;
-    const isLight = body.classList.contains('theme-light');
-    const icon = $('#themeToggle i');
-    
-    if (isLight) {
-        body.classList.remove('theme-light');
-        body.classList.add('theme-dark');
-        icon.className = 'fas fa-moon';
-        localStorage.setItem('theme', 'dark');
-    } else {
-        body.classList.remove('theme-dark');
-        body.classList.add('theme-light');
-        icon.className = 'fas fa-sun';
-        localStorage.setItem('theme', 'light');
-    }
-    
-    // Анимация переключения
-    this.style.transform = 'rotate(360deg)';
-    setTimeout(() => {
-        this.style.transform = '';
-    }, 500);
-});
-
 // Обработчики событий
 function setupEventListeners() {
+    // Поиск
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', searchScripts);
+    }
+    
+    // Enter для добавления тегов
+    const tagInput = document.getElementById('tagInput');
+    if (tagInput) {
+        tagInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addTag();
+            }
+        });
+    }
+    
+    // Переключение темы
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const body = document.body;
+            const isLight = body.classList.contains('theme-light');
+            const icon = this.querySelector('i');
+            
+            if (isLight) {
+                body.classList.remove('theme-light');
+                body.classList.add('theme-dark');
+                if (icon) icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('theme-dark');
+                body.classList.add('theme-light');
+                if (icon) icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Анимация переключения
+            this.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 500);
+        });
+    }
+    
     // Закрытие модалок по клику вне
     document.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal-overlay')) {
@@ -514,29 +679,18 @@ function setupEventListeners() {
         }
     });
     
-    // Enter для добавления тегов
-    $('#tagInput').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            addTag();
-        }
-    });
-    
-    // Поиск
-    $('#heroSearch').addEventListener('input', function(event) {
-        const searchTerm = event.target.value.toLowerCase();
-        // Реализация поиска
-    });
-    
     // Header scroll effect
     window.addEventListener('scroll', function() {
         const header = document.querySelector('.site-header');
-        if (window.scrollY > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        if (header) {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         }
     });
 }
 
 console.log('%c🚀 Gord Scripts Enhanced Loaded!', 'color:#3AA655;font-size:16px;font-weight:bold;');
+console.log('%c📁 Система сохранения данных активирована', 'color:#4FC3F7;font-size:14px;');
