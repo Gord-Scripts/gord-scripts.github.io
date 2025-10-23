@@ -3,172 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gord Scripts - Скрипты для Roblox</title>
+    <title>Gord Scripts - Лучшие скрипты для Roblox</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
     <!-- Yandex.RTB -->
     <script>window.yaContextCb=window.yaContextCb||[]</script>
     <script src="https://yandex.ru/ads/system/context.js" async></script>
 </head>
-<body>
-    <div class="container">
-        <header class="header">
-            <div class="brand">
-                <i class="fas fa-code"></i>
-                Gord Scripts
+<body class="dark-theme">
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>GordScripts</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="#" class="nav-link active"><i class="fas fa-home"></i> Главная</a>
+                    <a href="#" class="nav-link"><i class="fas fa-fire"></i> Популярные</a>
+                    <a href="#" class="nav-link"><i class="fas fa-upload"></i> Загрузить</a>
+                    <a href="#" class="nav-link"><i class="fas fa-book"></i> Правила</a>
+                    <a href="#" class="nav-link"><i class="fas fa-terminal"></i> Исполнители</a>
+                </nav>
             </div>
+            
             <div class="header-actions">
-                <button class="btn btn-secondary" onclick="showAdminModal()">
-                    <i class="fas fa-plus"></i>
-                    Добавить скрипт
-                </button>
-            </div>
-        </header>
-
-        <main class="main-grid">
-            <div class="scripts-section">
-                <h2>Доступные скрипты</h2>
-                
-                <!-- Яндекс.Реклама сверху -->
-                <div style="margin-bottom: 20px;">
-                    <!-- Yandex.RTB R-A-17561424-1 -->
-                    <div id="yandex_rtb_R-A-17561424-1"></div>
-                    <script>
-                    window.yaContextCb.push(() => {
-                        Ya.Context.AdvManager.render({
-                            "blockId": "R-A-17561424-1",
-                            "renderTo": "yandex_rtb_R-A-17561424-1"
-                        })
-                    })
-                    </script>
+                <div class="online-counter">
+                    <span class="online-users">
+                        <i class="fas fa-user"></i>
+                        <span id="registeredCount">0</span>
+                    </span>
+                    <span class="online-guests">
+                        <i class="fas fa-user-clock"></i>
+                        <span id="guestsCount">0</span>
+                    </span>
                 </div>
                 
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск скриптов...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="theme-toggle">
+                    <button id="themeToggle" class="theme-btn">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Войти
+                    </button>
+                    <button class="btn btn-primary" onclick="showRegisterModal()">
+                        <i class="fas fa-user-plus"></i>
+                        Регистрация
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title">Найдите лучшие Lua скрипты</h1>
+            <p class="hero-subtitle">Тысячи скриптов, загруженных сообществом для Roblox!</p>
+            
+            <div class="search-hero">
+                <div class="search-hero-box">
+                    <input type="text" id="heroSearch" placeholder="Попробуйте 'авто-фарм' или 'ESP'...">
+                    <button class="btn btn-primary search-hero-btn">
+                        <i class="fas fa-search"></i>
+                        Поиск
+                    </button>
+                </div>
+                <div class="search-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="strictSearch">
+                        <span class="checkmark"></span>
+                        Строгий поиск
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Активное сообщество</h3>
+                    <p>Присоединяйтесь к тысячам пользователей, которые уже делятся своим контентом!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>Огромная коллекция</h3>
+                    <p>Ежедневно загружаются десятки скриптов с тысячами вариантов на выбор!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Делитесь своим творчеством</h3>
+                    <p>Есть что показать? Присоединяйтесь к растущему сообществу и заявите о себе!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Яндекс.Реклама -->
+    <section class="ad-section">
+        <div class="container">
+            <!-- Yandex.RTB R-A-17561424-1 -->
+            <div id="yandex_rtb_R-A-17561424-1"></div>
+            <script>
+            window.yaContextCb.push(() => {
+                Ya.Context.AdvManager.render({
+                    "blockId": "R-A-17561424-1",
+                    "renderTo": "yandex_rtb_R-A-17561424-1"
+                })
+            })
+            </script>
+        </div>
+    </section>
+
+    <!-- Scripts Section -->
+    <main class="main-content">
+        <div class="container">
+            <div class="section-header">
+                <h2>Последние скрипты</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="showUploadModal()">
+                        <i class="fas fa-upload"></i>
+                        Загрузить скрипт
+                    </button>
+                </div>
+            </div>
+
+            <div class="scripts-container">
                 <div class="scripts-grid" id="scriptsGrid">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        Загрузка скриптов...
-                    </div>
+                    <!-- Скрипты будут загружены здесь -->
+                </div>
+                
+                <div class="load-more-section">
+                    <button class="btn btn-outline" id="loadMoreBtn">
+                        <i class="fas fa-redo"></i>
+                        Загрузить еще
+                    </button>
                 </div>
             </div>
+        </div>
+    </main>
 
-            <aside class="admin-panel card">
-                <h3 style="margin-bottom: 20px;">Управление</h3>
-                <p style="color: var(--muted); margin-bottom: 20px; font-size: 14px;">
-                    Добавляйте и управляйте скриптами через админ-панель. Все изменения сохраняются на GitHub.
-                </p>
-                <button class="btn btn-primary btn-full" onclick="showAdminModal()">
-                    <i class="fas fa-plus"></i>
-                    Добавить скрипт
-                </button>
-                
-                <!-- Яндекс.Реклама в боковой панели -->
-                <div style="margin: 20px 0;">
-                    <!-- Yandex.RTB R-A-17561424-1 -->
-                    <div id="yandex_rtb_R-A-17561424-2"></div>
-                    <script>
-                    window.yaContextCb.push(() => {
-                        Ya.Context.AdvManager.render({
-                            "blockId": "R-A-17561424-1",
-                            "renderTo": "yandex_rtb_R-A-17561424-2"
-                        })
-                    })
-                    </script>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GordScripts</h3>
+                    <p>Лучшая платформа для обмена скриптами Roblox</p>
                 </div>
-                
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
-                    <h4 style="margin-bottom: 12px;">Статистика</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 24px; font-weight: 700; color: var(--accent);" id="scriptsCount">0</div>
-                            <div style="font-size: 12px; color: var(--muted);">Скриптов</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 24px; font-weight: 700; color: var(--accent-2);" id="featuresCount">0</div>
-                            <div style="font-size: 12px; color: var(--muted);">Функций</div>
-                        </div>
-                    </div>
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <a href="#">Главная</a>
+                    <a href="#">Популярные</a>
+                    <a href="#">Загрузить</a>
                 </div>
-            </aside>
-        </main>
-    </div>
+                <div class="footer-section">
+                    <h4>Помощь</h4>
+                    <a href="#">Правила</a>
+                    <a href="#">Исполнители</a>
+                    <a href="#">Документация</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GordScripts. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
 
-    <!-- Script Modal -->
-    <div class="modal" id="scriptModal">
+    <!-- Модальные окна -->
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="scriptModalTitle">Скрипт</h3>
-                <button class="modal-close" onclick="closeScriptModal()">&times;</button>
+                <h3 class="modal-title">Вход в аккаунт</h3>
+                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="script-meta" id="scriptModalMeta"></div>
-                <div class="script-description" id="scriptModalDescription"></div>
-                <div style="margin: 20px 0;">
-                    <label class="form-label">Код скрипта:</label>
-                    <pre class="code-block" id="scriptModalCode"></pre>
-                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email или имя пользователя</label>
+                        <input type="text" class="form-input" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Регистрация</h3>
+                <button class="modal-close" onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-input" id="registerUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 class="modal-title">Загрузить скрипт</h3>
+                <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Название скрипта *</label>
+                            <input type="text" class="form-input" id="scriptTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Игра *</label>
+                            <select class="form-select" id="scriptGame" required>
+                                <option value="">Выберите игру</option>
+                                <option value="Blox Fruits">Blox Fruits</option>
+                                <option value="Brookhaven">Brookhaven</option>
+                                <option value="Doors">Doors</option>
+                                <option value="Pet Simulator X">Pet Simulator X</option>
+                                <option value="Universal">Универсальный</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Описание *</label>
+                        <textarea class="form-textarea" id="scriptDescription" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Код скрипта (Lua) *</label>
+                        <textarea class="form-textarea code-editor" id="scriptCode" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Изображение скрипта</label>
+                        <div class="image-upload">
+                            <input type="file" id="scriptImage" accept="image/*" class="file-input">
+                            <label for="scriptImage" class="upload-label">
+                                <i class="fas fa-upload"></i>
+                                <span>Выберите изображение</span>
+                            </label>
+                            <div id="imagePreview" class="image-preview"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Теги</label>
+                        <div class="tags-input">
+                            <input type="text" class="form-input" id="tagInput" placeholder="Добавить тег...">
+                            <button type="button" class="btn btn-outline btn-small" onclick="addTag()">Добавить</button>
+                        </div>
+                        <div id="tagsList" class="tags-list"></div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="copyScriptCode()">
-                    <i class="fas fa-copy"></i>
-                    Копировать код
-                </button>
-                <button class="btn btn-primary" onclick="downloadScript()">
-                    <i class="fas fa-download"></i>
-                    Скачать файл
+                <button class="btn btn-secondary" onclick="closeUploadModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="uploadScript()">
+                    <i class="fas fa-upload"></i>
+                    Загрузить скрипт
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Admin Modal -->
-    <div class="modal" id="adminModal">
-        <div class="modal-content">
+    <!-- Script View Modal -->
+    <div class="modal" id="scriptViewModal">
+        <div class="modal-content large">
             <div class="modal-header">
-                <h3 class="modal-title">Добавить скрипт</h3>
-                <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+                <h3 class="modal-title" id="viewScriptTitle">Скрипт</h3>
+                <button class="modal-close" onclick="closeScriptViewModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="scriptForm">
-                    <div class="form-group">
-                        <label class="form-label">Название скрипта *</label>
-                        <input type="text" class="form-input" id="scriptTitle" required placeholder="Например: Авто-фарм монет">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Описание *</label>
-                        <textarea class="form-textarea" id="scriptDescription" required placeholder="Опишите что делает этот скрипт..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Код скрипта (Lua) *</label>
-                        <textarea class="form-textarea" id="scriptCode" required placeholder="Вставьте Lua код здесь..." style="min-height: 200px; font-family: 'JetBrains Mono', monospace;"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Функции скрипта</label>
-                        <div class="features-input">
-                            <input type="text" class="form-input feature-input" id="featureInput" placeholder="Добавить функцию...">
-                            <button type="button" class="btn btn-secondary btn-small" onclick="addFeature()">
-                                <i class="fas fa-plus"></i>
+                <div class="script-view-content">
+                    <div class="script-view-header">
+                        <div class="script-meta">
+                            <span class="script-author" id="viewScriptAuthor"></span>
+                            <span class="script-date" id="viewScriptDate"></span>
+                            <span class="script-game" id="viewScriptGame"></span>
+                        </div>
+                        <div class="script-actions">
+                            <button class="btn btn-outline btn-small" onclick="copyScript()">
+                                <i class="fas fa-copy"></i>
+                                Копировать
+                            </button>
+                            <button class="btn btn-primary btn-small" onclick="downloadScript()">
+                                <i class="fas fa-download"></i>
+                                Скачать
                             </button>
                         </div>
-                        <div id="featuresList" class="script-features"></div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">Автор</label>
-                        <input type="text" class="form-input" id="scriptAuthor" value="Gord" placeholder="Ваше имя">
+                    <div class="script-image" id="viewScriptImage"></div>
+                    
+                    <div class="script-description" id="viewScriptDescription"></div>
+                    
+                    <div class="script-tags" id="viewScriptTags"></div>
+                    
+                    <div class="script-code">
+                        <label class="form-label">Код скрипта:</label>
+                        <pre class="code-block" id="viewScriptCode"></pre>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAdminModal()">Отмена</button>
-                <button class="btn btn-primary" onclick="saveScript()">
-                    <i class="fas fa-save"></i>
-                    Сохранить скрипт
-                </button>
+                </div>
             </div>
         </div>
     </div>
