@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Yandex.RTB -->
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
 </head>
 <body>
     <div class="container">
@@ -26,6 +30,21 @@
         <main class="main-grid">
             <div class="scripts-section">
                 <h2>Доступные скрипты</h2>
+                
+                <!-- Яндекс.Реклама сверху -->
+                <div style="margin-bottom: 20px;">
+                    <!-- Yandex.RTB R-A-17561424-1 -->
+                    <div id="yandex_rtb_R-A-17561424-1"></div>
+                    <script>
+                    window.yaContextCb.push(() => {
+                        Ya.Context.AdvManager.render({
+                            "blockId": "R-A-17561424-1",
+                            "renderTo": "yandex_rtb_R-A-17561424-1"
+                        })
+                    })
+                    </script>
+                </div>
+                
                 <div class="scripts-grid" id="scriptsGrid">
                     <div class="loading">
                         <div class="loading-spinner"></div>
@@ -43,6 +62,20 @@
                     <i class="fas fa-plus"></i>
                     Добавить скрипт
                 </button>
+                
+                <!-- Яндекс.Реклама в боковой панели -->
+                <div style="margin: 20px 0;">
+                    <!-- Yandex.RTB R-A-17561424-1 -->
+                    <div id="yandex_rtb_R-A-17561424-2"></div>
+                    <script>
+                    window.yaContextCb.push(() => {
+                        Ya.Context.AdvManager.render({
+                            "blockId": "R-A-17561424-1",
+                            "renderTo": "yandex_rtb_R-A-17561424-2"
+                        })
+                    })
+                    </script>
+                </div>
                 
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
                     <h4 style="margin-bottom: 12px;">Статистика</h4>
