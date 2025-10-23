@@ -27,13 +27,60 @@
                     </div>
                 </div>
                 
-                <nav class="main-nav">
-                    <a href="#" class="nav-link active"><i class="fas fa-home"></i> Главная</a>
-                    <a href="#" class="nav-link"><i class="fas fa-fire"></i> Популярные</a>
-                    <a href="#" class="nav-link"><i class="fas fa-upload"></i> Загрузить</a>
-                    <a href="#" class="nav-link"><i class="fas fa-book"></i> Правила</a>
-                    <a href="#" class="nav-link cta"><i class="fas fa-terminal"></i> Исполнители</a>
-                </nav>
+                <!-- Твое меню с играми -->
+                <div class="menu">
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none"></rect>
+                                <path d="M213.3815,109.61945,133.376,36.88436a8,8,0,0,0-10.76339.00036l-79.9945,72.73477A8,8,0,0,0,40,115.53855V208a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V115.53887A8,8,0,0,0,213.3815,109.61945Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+                            </svg>
+                        </span>
+                        <span class="link-title">Home</span>
+                    </a>
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none"></rect>
+                                <polyline points="76.201 132.201 152.201 40.201 216 40 215.799 103.799 123.799 179.799" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline>
+                                <line x1="100" y1="156" x2="160" y2="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+                                <path d="M82.14214,197.45584,52.201,227.397a8,8,0,0,1-11.31371,0L28.603,215.11268a8,8,0,0,1,0-11.31371l29.94113-29.94112a8,8,0,0,0,0-11.31371L37.65685,141.65685a8,8,0,0,1,0-11.3137l12.6863-12.6863a8,8,0,0,1,11.3137,0l76.6863,76.6863a8,8,0,0,1,0,11.3137l-12.6863,12.6863a8,8,0,0,1-11.3137,0L93.45584,197.45584A8,8,0,0,0,82.14214,197.45584Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+                            </svg>
+                        </span>
+                        <span class="link-title">Games</span>
+                    </a>
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none"></rect>
+                                <path d="M45.42853,176.99811A95.95978,95.95978,0,1,1,79.00228,210.5717l.00023-.001L45.84594,220.044a8,8,0,0,1-9.89-9.89l9.47331-33.15657Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+                                <line x1="96" y1="112" x2="160" y2="112" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+                                <line x1="96" y1="144" x2="160" y2="144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+                            </svg>
+                        </span>
+                        <span class="link-title">Chat</span>
+                    </a>
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none"></rect>
+                                <circle cx="116" cy="116" r="84" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle>
+                                <line x1="175.39356" y1="175.40039" x2="223.99414" y2="224.00098" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+                            </svg>
+                        </span>
+                        <span class="link-title">Search</span>
+                    </a>
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none"></rect>
+                                <circle cx="128" cy="96" r="64" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="16"></circle>
+                                <path d="M30.989,215.99064a112.03731,112.03731,0,0,1,194.02311.002" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+                            </svg>
+                        </span>
+                        <span class="link-title">Profile</span>
+                    </a>
+                </div>
                 
                 <div class="header-actions">
                     <div class="online-counter">
@@ -47,17 +94,17 @@
                         </span>
                     </div>
                     
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Поиск скриптов...">
-                        <button class="search-btn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+                    <!-- Твоя кнопка Разработчики -->
+                    <button class="dev-btn" onclick="window.open('https://t.me/GordScripts', '_blank')">
+                        Разработчики
+                    </button>
                     
-                    <div class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn">
-                            <i class="fas fa-moon"></i>
-                        </button>
+                    <!-- Твой переключатель темы -->
+                    <div class="toggle-switch">
+                        <label class="switch-label">
+                            <input type="checkbox" class="checkbox" id="themeCheckbox">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                     
                     <div class="auth-buttons">
@@ -102,10 +149,19 @@
                             <i class="fas fa-upload"></i>
                             ЗАГРУЗИТЬ СКРИПТ
                         </a>
-                        <button class="btn ghost">
-                            <i class="fas fa-play"></i>
-                            КАК ИСПОЛЬЗОВАТЬ
-                        </button>
+                        <!-- Твои социальные сети -->
+                        <div class="card">
+                            <span>Social</span>
+                            <a class="social-link" href="https://t.me/gordscripts" target="_blank">
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 461.001 461.001" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path style="fill:#F61C0D;" d="M365.257,67.393H95.744C42.866,67.393,0,110.259,0,163.137v134.728 c0,52.878,42.866,95.744,95.744,95.744h269.513c52.878,0,95.744-42.866,95.744-95.744V163.137 C461.001,110.259,418.135,67.393,365.257,67.393z M300.506,237.056l-126.06,60.123c-3.359,1.602-7.239-0.847-7.239-4.568V168.607 c0-3.774,3.982-6.22,7.348-4.514l126.06,63.881C304.363,229.873,304.298,235.248,300.506,237.056z"></path> </g> </g></svg>
+                            </a>
+                            <a class="social-link" href="https://tiktok.com/@gordscripts" target="_blank">
+                                <svg fill="#000000" viewBox="0 0 512 512" id="icons" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M412.19,118.66a109.27,109.27,0,0,1-9.45-5.5,132.87,132.87,0,0,1-24.27-20.62c-18.1-20.71-24.86-41.72-27.35-56.43h.1C349.14,23.9,350,16,350.13,16H267.69V334.78c0,4.28,0,8.51-.18,12.69,0,.52-.05,1-.08,1.56,0,.23,0,.47-.05.71,0,.06,0,.12,0,.18a70,70,0,0,1-35.22,55.56,68.8,68.8,0,0,1-34.11,9c-38.41,0-69.54-31.32-69.54-70s31.13-70,69.54-70a68.9,68.9,0,0,1,21.41,3.39l.1-83.94a153.14,153.14,0,0,0-118,34.52,161.79,161.79,0,0,0-35.3,43.53c-3.48,6-16.61,30.11-18.2,69.24-1,22.21,5.67,45.22,8.85,54.73v.2c2,5.6,9.75,24.71,22.38,40.82A167.53,167.53,0,0,0,115,470.66v-.2l.2.2C155.11,497.78,199.36,496,199.36,496c7.66-.31,33.32,0,62.46-13.81,32.32-15.31,50.72-38.12,50.72-38.12a158.46,158.46,0,0,0,27.64-45.93c7.46-19.61,9.95-43.13,9.95-52.53V176.49c1,.6,14.32,9.41,14.32,9.41s19.19,12.3,49.13,20.31c21.48,5.7,50.42,6.9,50.42,6.9V131.27C453.86,132.37,433.27,129.17,412.19,118.66Z"></path></g></svg>
+                            </a>
+                            <a class="social-link" href="https://youtube.com/@gordscripts" target="_blank">
+                                <svg viewBox="0 -28.5 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z" fill="#5865F2" fill-rule="nonzero"> </path> </g> </g></svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
@@ -158,40 +214,6 @@ autoFarm()</code></pre>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">ПОЧЕМУ ВЫБИРАЮТ НАС</h2>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Активное сообщество</h3>
-                    <p>Присоединяйтесь к тысячам пользователей, которые уже делятся своим контентом!</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-box-open"></i>
-                    </div>
-                    <h3>Огромная коллекция</h3>
-                    <p>Ежедневно загружаются десятки скриптов с тысячами вариантов на выбор!</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-share-alt"></i>
-                    </div>
-                    <h3>Делитесь своим творчеством</h3>
-                    <p>Есть что показать? Присоединяйтесь к растущему сообществу и заявите о себе!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Scripts Section -->
     <main class="main-content">
         <div class="container">
@@ -235,10 +257,9 @@ autoFarm()</code></pre>
                     </div>
                     <p>Лучшая платформа для обмена скриптами Roblox</p>
                     <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://t.me/gordscripts" class="social-link" target="_blank"><i class="fab fa-telegram"></i></a>
+                        <a href="https://youtube.com/@gordscripts" class="social-link" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://tiktok.com/@gordscripts" class="social-link" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 
@@ -246,17 +267,15 @@ autoFarm()</code></pre>
                     <h4>Навигация</h4>
                     <a href="#">Главная</a>
                     <a href="#">Популярные</a>
-                    <a href="#">Загрузить</a>
+                    <a href="#" onclick="showUploadModal()">Загрузить</a>
                     <a href="#">Правила</a>
-                    <a href="#">Исполнители</a>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Помощь</h4>
                     <a href="#">Документация</a>
                     <a href="#">FAQ</a>
-                    <a href="#">Поддержка</a>
-                    <a href="#">Контакты</a>
+                    <a href="https://t.me/GordScripts" target="_blank">Поддержка</a>
                 </div>
             </div>
             
@@ -290,18 +309,19 @@ autoFarm()</code></pre>
                                 <option value="Doors">Doors</option>
                                 <option value="Pet Simulator X">Pet Simulator X</option>
                                 <option value="Universal">Универсальный</option>
+                                <option value="Другая">Другая игра</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Описание *</label>
-                        <textarea class="form-textarea" id="scriptDescription" required></textarea>
+                        <textarea class="form-textarea" id="scriptDescription" required placeholder="Опишите что делает ваш скрипт..."></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Код скрипта (Lua) *</label>
-                        <textarea class="form-textarea code-editor" id="scriptCode" required></textarea>
+                        <textarea class="form-textarea code-editor" id="scriptCode" required placeholder="Вставьте ваш Lua код здесь..."></textarea>
                     </div>
                     
                     <div class="form-group">
@@ -347,6 +367,10 @@ autoFarm()</code></pre>
                             <button class="btn btn-small" onclick="shareCurrentScript()">
                                 <i class="fas fa-share"></i>
                                 Поделиться
+                            </button>
+                            <!-- Твоя кнопка удаления -->
+                            <button class="button delete-btn" onclick="deleteCurrentScript()">
+                                <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
                             </button>
                         </div>
                     </div>
