@@ -12,91 +12,158 @@
     <script>window.yaContextCb=window.yaContextCb||[]</script>
     <script src="https://yandex.ru/ads/system/context.js" async></script>
 </head>
-<body class="dark-theme">
+<body class="theme-dark">
     <!-- Header -->
-    <header class="main-header">
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo">
-                    <i class="fas fa-bolt"></i>
-                    <span>GordScripts</span>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="brand">
+                    <div class="brand__logo">
+                        <i class="fas fa-bolt" style="font-size: 32px; color: #3AA655; display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                    </div>
+                    <div class="brand__text">
+                        <h1 class="brand__title">GORD<span class="accent">SCRIPTS</span></h1>
+                        <div class="brand__sub">Лучшие скрипты для Roblox</div>
+                    </div>
                 </div>
+                
                 <nav class="main-nav">
                     <a href="#" class="nav-link active"><i class="fas fa-home"></i> Главная</a>
                     <a href="#" class="nav-link"><i class="fas fa-fire"></i> Популярные</a>
                     <a href="#" class="nav-link"><i class="fas fa-upload"></i> Загрузить</a>
                     <a href="#" class="nav-link"><i class="fas fa-book"></i> Правила</a>
-                    <a href="#" class="nav-link"><i class="fas fa-terminal"></i> Исполнители</a>
+                    <a href="#" class="nav-link cta"><i class="fas fa-terminal"></i> Исполнители</a>
                 </nav>
-            </div>
-            
-            <div class="header-actions">
-                <div class="online-counter">
-                    <span class="online-users">
-                        <i class="fas fa-user"></i>
-                        <span id="registeredCount">0</span>
-                    </span>
-                    <span class="online-guests">
-                        <i class="fas fa-user-clock"></i>
-                        <span id="guestsCount">0</span>
-                    </span>
-                </div>
                 
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Поиск скриптов...">
-                    <button class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                
-                <div class="theme-toggle">
-                    <button id="themeToggle" class="theme-btn">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
-                
-                <div class="auth-buttons">
-                    <button class="btn btn-outline" onclick="showLoginModal()">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Войти
-                    </button>
-                    <button class="btn btn-primary" onclick="showRegisterModal()">
-                        <i class="fas fa-user-plus"></i>
-                        Регистрация
-                    </button>
+                <div class="header-actions">
+                    <div class="online-counter">
+                        <span class="online-users">
+                            <i class="fas fa-user"></i>
+                            <span id="registeredCount">0</span>
+                        </span>
+                        <span class="online-guests">
+                            <i class="fas fa-user-clock"></i>
+                            <span id="guestsCount">157</span>
+                        </span>
+                    </div>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Поиск скриптов...">
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="auth-buttons">
+                        <button class="btn btn-outline" onclick="showLoginModal()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Войти
+                        </button>
+                        <button class="btn btn-primary" onclick="showRegisterModal()">
+                            <i class="fas fa-user-plus"></i>
+                            Регистрация
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-container">
-            <h1 class="hero-title">Найдите лучшие Lua скрипты</h1>
-            <p class="hero-subtitle">Тысячи скриптов, загруженных сообществом для Roblox!</p>
-            
-            <div class="search-hero">
-                <div class="search-hero-box">
-                    <input type="text" id="heroSearch" placeholder="Попробуйте 'авто-фарм' или 'ESP'...">
-                    <button class="btn btn-primary search-hero-btn">
-                        <i class="fas fa-search"></i>
-                        Поиск
-                    </button>
+    <section class="hero">
+        <div class="hero__bg"></div>
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-meta">
+                    <h2 class="h-subtitle">НАЙДИТЕ ЛУЧШИЕ LUA СКРИПТЫ</h2>
+                    <p class="hero-description">Тысячи скриптов, загруженных сообществом для Roblox! Авто-фарм, ESP, читы и многое другое.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="scriptsCount">0</span>
+                            <span class="stat-label">Скриптов</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1.2K+</span>
+                            <span class="stat-label">Пользователей</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">15K+</span>
+                            <span class="stat-label">Загрузок</span>
+                        </div>
+                    </div>
+                    <div class="hero-actions">
+                        <a href="#" class="upload-btn" onclick="showUploadModal(); return false;">
+                            <i class="fas fa-upload"></i>
+                            ЗАГРУЗИТЬ СКРИПТ
+                        </a>
+                        <button class="btn ghost">
+                            <i class="fas fa-play"></i>
+                            КАК ИСПОЛЬЗОВАТЬ
+                        </button>
+                    </div>
                 </div>
-                <div class="search-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="strictSearch">
-                        <span class="checkmark"></span>
-                        Строгий поиск
-                    </label>
+                
+                <div class="hero-visual">
+                    <div class="code-preview">
+                        <div class="code-header">
+                            <div class="code-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="code-title">auto_farm.lua</span>
+                        </div>
+                        <div class="code-content">
+                            <pre><code>-- Авто-фарм скрипт
+function autoFarm()
+    while true do
+        wait(1)
+        for _, coin in pairs(workspace.Coins:GetChildren()) do
+            if coin:IsA("Part") then
+                firetouchinterest(coin, player.Character.HumanoidRootPart, 0)
+                wait(0.1)
+                firetouchinterest(coin, player.Character.HumanoidRootPart, 1)
+            end
+        end
+    end
+end
+
+autoFarm()</code></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Яндекс.Реклама -->
+    <section class="ad-section">
+        <div class="container">
+            <!-- Yandex.RTB R-A-17561424-1 -->
+            <div id="yandex_rtb_R-A-17561424-1"></div>
+            <script>
+            window.yaContextCb.push(() => {
+                Ya.Context.AdvManager.render({
+                    "blockId": "R-A-17561424-1",
+                    "renderTo": "yandex_rtb_R-A-17561424-1"
+                })
+            })
+            </script>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="features-section">
         <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ПОЧЕМУ ВЫБИРАЮТ НАС</h2>
+            </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -125,27 +192,11 @@
         </div>
     </section>
 
-    <!-- Яндекс.Реклама -->
-    <section class="ad-section">
-        <div class="container">
-            <!-- Yandex.RTB R-A-17561424-1 -->
-            <div id="yandex_rtb_R-A-17561424-1"></div>
-            <script>
-            window.yaContextCb.push(() => {
-                Ya.Context.AdvManager.render({
-                    "blockId": "R-A-17561424-1",
-                    "renderTo": "yandex_rtb_R-A-17561424-1"
-                })
-            })
-            </script>
-        </div>
-    </section>
-
     <!-- Scripts Section -->
     <main class="main-content">
         <div class="container">
             <div class="section-header">
-                <h2>Последние скрипты</h2>
+                <h2 class="section-title">ПОСЛЕДНИЕ СКРИПТЫ</h2>
                 <div class="section-actions">
                     <button class="btn btn-primary" onclick="showUploadModal()">
                         <i class="fas fa-upload"></i>
@@ -170,26 +221,45 @@
     </main>
 
     <!-- Footer -->
-    <footer class="main-footer">
+    <footer class="site-footer">
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-grid">
                 <div class="footer-section">
-                    <h3>GordScripts</h3>
+                    <div class="brand">
+                        <div class="brand__logo">
+                            <i class="fas fa-bolt" style="font-size: 24px; color: #3AA655; display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                        </div>
+                        <div class="brand__text">
+                            <h3 class="brand__title">GORD<span class="accent">SCRIPTS</span></h3>
+                        </div>
+                    </div>
                     <p>Лучшая платформа для обмена скриптами Roblox</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                    </div>
                 </div>
+                
                 <div class="footer-section">
                     <h4>Навигация</h4>
                     <a href="#">Главная</a>
                     <a href="#">Популярные</a>
                     <a href="#">Загрузить</a>
-                </div>
-                <div class="footer-section">
-                    <h4>Помощь</h4>
                     <a href="#">Правила</a>
                     <a href="#">Исполнители</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Помощь</h4>
                     <a href="#">Документация</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Поддержка</a>
+                    <a href="#">Контакты</a>
                 </div>
             </div>
+            
             <div class="footer-bottom">
                 <p>&copy; 2024 GordScripts. Все права защищены.</p>
             </div>
@@ -197,56 +267,6 @@
     </footer>
 
     <!-- Модальные окна -->
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Вход в аккаунт</h3>
-                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label">Email или имя пользователя</label>
-                        <input type="text" class="form-input" id="loginUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Пароль</label>
-                        <input type="password" class="form-input" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Войти</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Регистрация</h3>
-                <button class="modal-close" onclick="closeRegisterModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label class="form-label">Имя пользователя</label>
-                        <input type="text" class="form-input" id="registerUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="registerEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Пароль</label>
-                        <input type="password" class="form-input" id="registerPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Зарегистрироваться</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Upload Modal -->
     <div class="modal" id="uploadModal">
         <div class="modal-content large">
@@ -285,18 +305,6 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Изображение скрипта</label>
-                        <div class="image-upload">
-                            <input type="file" id="scriptImage" accept="image/*" class="file-input">
-                            <label for="scriptImage" class="upload-label">
-                                <i class="fas fa-upload"></i>
-                                <span>Выберите изображение</span>
-                            </label>
-                            <div id="imagePreview" class="image-preview"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
                         <label class="form-label">Теги</label>
                         <div class="tags-input">
                             <input type="text" class="form-input" id="tagInput" placeholder="Добавить тег...">
@@ -326,13 +334,9 @@
             <div class="modal-body">
                 <div class="script-view-content">
                     <div class="script-view-header">
-                        <div class="script-meta">
-                            <span class="script-author" id="viewScriptAuthor"></span>
-                            <span class="script-date" id="viewScriptDate"></span>
-                            <span class="script-game" id="viewScriptGame"></span>
-                        </div>
+                        <div id="viewScriptMeta" class="script-meta"></div>
                         <div class="script-actions">
-                            <button class="btn btn-outline btn-small" onclick="copyScript()">
+                            <button class="btn btn-outline btn-small" onclick="copyScriptCode()">
                                 <i class="fas fa-copy"></i>
                                 Копировать
                             </button>
@@ -340,16 +344,24 @@
                                 <i class="fas fa-download"></i>
                                 Скачать
                             </button>
+                            <button class="btn btn-small" onclick="shareCurrentScript()">
+                                <i class="fas fa-share"></i>
+                                Поделиться
+                            </button>
                         </div>
                     </div>
                     
-                    <div class="script-image" id="viewScriptImage"></div>
+                    <div class="script-description-view">
+                        <label class="form-label">Описание:</label>
+                        <p id="viewScriptDescription"></p>
+                    </div>
                     
-                    <div class="script-description" id="viewScriptDescription"></div>
+                    <div class="script-tags-view">
+                        <label class="form-label">Теги:</label>
+                        <div id="viewScriptTags" class="script-tags"></div>
+                    </div>
                     
-                    <div class="script-tags" id="viewScriptTags"></div>
-                    
-                    <div class="script-code">
+                    <div class="script-code-view">
                         <label class="form-label">Код скрипта:</label>
                         <pre class="code-block" id="viewScriptCode"></pre>
                     </div>
@@ -358,7 +370,10 @@
         </div>
     </div>
 
-    <!-- Notification -->
+    <!-- Оверлей для модальных окон -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <!-- Уведомления -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <i class="fas fa-check" id="notificationIcon"></i>
