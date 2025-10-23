@@ -1,28 +1,33 @@
+// ============================================================================
+// Gord Scripts — SCRIPT.JS (JavaLauncher Style)
+// Enhanced with data persistence and JavaLauncher animations
+// ============================================================================
+
 // Конфигурация
 const CONFIG = {
     GITHUB_USER: 'Gord-Scripts',
     REPO: 'gord-scripts.github.io',
-    SCRIPTS_FILE: 'scripts.json',
-    USERS_FILE: 'users.json'
+    SCRIPTS_FILE: 'scripts.json'
 };
 
 // Глобальные переменные
 let scripts = [];
-let users = [];
 let currentUser = null;
 let currentTags = [];
-let currentImage = null;
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
+    setupEventListeners();
 });
 
 async function initApp() {
-    await loadData();
-    updateOnlineCounters();
+    await loadScripts();
     renderScripts();
-    setupEventListeners();
+    updateStats();
+    
+    // Загрузка темы
+    loadTheme();
     
     // Проверяем авторизацию
     const savedUser = localStorage.getItem('currentUser');
@@ -32,45 +37,34 @@ async function initApp() {
     }
 }
 
-// Загрузка данных
-async function loadData() {
+// Загрузка скриптов
+async function loadScripts() {
     try {
-        // Загружаем скрипты
-        const scriptsUrl = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.REPO}/main/${CONFIG.SCRIPTS_FILE}`;
-        const scriptsResponse = await fetch(scriptsUrl);
+        const url = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.REPO}/main/${CONFIG.SCRIPTS_FILE}`;
+        const response = await fetch(url);
         
-        if (scriptsResponse.ok) {
-            const scriptsData = await scriptsResponse.json();
-            scripts = scriptsData.scripts || [];
+        if (response.ok) {
+            const data = await response.json();
+            scripts = data.scripts || [];
         } else {
             // Если файла нет, создаем демо-данные
-            await createDemoData();
+            await createDemoScripts();
         }
-        
-        // Загружаем пользователей
-        const usersUrl = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.REPO}/main/${CONFIG.USERS_FILE}`;
-        const usersResponse = await fetch(usersUrl);
-        
-        if (usersResponse.ok) {
-            const usersData = await usersResponse.json();
-            users = usersData.users || [];
-        }
-        
     } catch (error) {
-        console.error('Ошибка загрузки данных:', error);
-        // Пробуем загрузить из localStorage как резерв
+        console.error('Ошибка загрузки скриптов:', error);
+        // Пробуем загрузить из localStorage
         loadFromLocalStorage();
     }
 }
 
-// Создание демо-данных
-async function createDemoData() {
+// Создание демо-скриптов
+async function createDemoScripts() {
     scripts = [
         {
             id: generateId(),
             title: "Авто-фарм монет",
-            description: "Автоматический сбор монет в популярных играх Roblox с настройкой интервалов",
-            code: `-- Авто-фарм монет
+            description: "Автоматический сбор монет в Brookhaven с настройкой интервалов",
+            code: `-- Авто-фарм монет для Brookhaven
 loadstring(game:HttpGet("https://example.com/auto-farm.lua"))()
 
 local Players = game:GetService("Players")
@@ -79,7 +73,6 @@ local player = Players.LocalPlayer
 function autoFarm()
     while true do
         wait(1)
-        -- Код автоматического фарма
         for _, coin in pairs(workspace.Coins:GetChildren()) do
             if coin:IsA("Part") then
                 firetouchinterest(coin, player.Character.HumanoidRootPart, 0)
@@ -92,9 +85,8 @@ end
 
 autoFarm()`,
             author: "Gord",
-            game: "Universal",
-            tags: ["авто-фарм", "монеты", "автоматизация"],
-            image: null,
+            game: "Brookhaven",
+            tags: ["авто-фарм", "монеты", "брукхейвен"],
             createdAt: new Date().toISOString(),
             views: 1250,
             likes: 89
@@ -102,7 +94,7 @@ autoFarm()`,
         {
             id: generateId(),
             title: "ESP для игроков",
-            description: "Отображение игроков через стены с настройкой цветов и расстояния",
+            description: "Отображение игроков через стены с настройкой цветов",
             code: `-- ESP скрипт
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -118,53 +110,31 @@ function createESP(player)
     highlight.Name = "ESP_" .. player.Name
 end
 
-Players.PlayerAdded:Connect(createESP)
-
-for _, player in pairs(Players:GetPlayers()) do
-    if player.Character then
-        createESP(player)
-    end
-    player.CharacterAdded:Connect(function()
-        createESP(player)
-    end)
-end)`,
+Players.PlayerAdded:Connect(createESP)`,
             author: "Gord",
             game: "Universal",
             tags: ["ESP", "игроки", "видимость"],
-            image: null,
             createdAt: new Date(Date.now() - 86400000).toISOString(),
             views: 890,
             likes: 67
         }
     ];
     
-    users = [
-        {
-            id: generateId(),
-            username: "Gord",
-            email: "gord@example.com",
-            role: "admin",
-            joinedAt: new Date().toISOString(),
-            uploadedScripts: 2
-        }
-    ];
-    
-    await saveData();
+    await saveScripts();
 }
 
-// Сохранение данных
-async function saveData() {
+// Сохранение скриптов
+async function saveScripts() {
     const dataToSave = {
         scripts: scripts,
-        users: users,
         lastUpdated: new Date().toISOString()
     };
     
-    // Сохраняем в localStorage как резерв
+    // Сохраняем в localStorage
     localStorage.setItem('gordScriptsData', JSON.stringify(dataToSave));
     
     // В реальном приложении здесь был бы вызов GitHub API
-    console.log('Данные для сохранения:', dataToSave);
+    console.log('Скрипты сохранены:', dataToSave);
     showNotification('Данные успешно сохранены!', 'success');
 }
 
@@ -174,10 +144,9 @@ function loadFromLocalStorage() {
     if (savedData) {
         const data = JSON.parse(savedData);
         scripts = data.scripts || [];
-        users = data.users || [];
         showNotification('Данные загружены из локального хранилища', 'success');
     } else {
-        createDemoData();
+        createDemoScripts();
     }
 }
 
@@ -203,28 +172,19 @@ function showNotification(message, type = 'success') {
     setTimeout(() => notification.classList.remove('show'), 3000);
 }
 
-// Обновление счетчиков онлайн
-function updateOnlineCounters() {
-    const registered = Math.floor(Math.random() * 100) + 300;
-    const guests = Math.floor(Math.random() * 500) + 2800;
-    
-    $('#registeredCount').textContent = registered;
-    $('#guestsCount').textContent = guests;
-}
-
 // Рендеринг скриптов
 function renderScripts() {
     const scriptsGrid = $('#scriptsGrid');
     
     if (scripts.length === 0) {
         scriptsGrid.innerHTML = `
-            <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                <i class="fas fa-code" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                <h3 style="margin-bottom: 1rem;">Скриптов пока нет</h3>
-                <p style="color: var(--text-muted); margin-bottom: 2rem;">Будьте первым, кто загрузит скрипт!</p>
-                <button class="btn btn-primary" onclick="showUploadModal()">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📝</div>
+                <h3 style="margin-bottom: 1rem; font-family: var(--ff-heading);">СКРИПТОВ ПОКА НЕТ</h3>
+                <p style="color: var(--muted); margin-bottom: 2rem;">Будьте первым, кто загрузит скрипт!</p>
+                <button class="upload-btn" onclick="showUploadModal()">
                     <i class="fas fa-upload"></i>
-                    Загрузить скрипт
+                    ЗАГРУЗИТЬ СКРИПТ
                 </button>
             </div>
         `;
@@ -265,13 +225,13 @@ function renderScripts() {
             ` : ''}
             
             <div class="script-actions">
-                <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); copyScript('${script.id}')">
+                <button class="btn btn-small" onclick="event.stopPropagation(); copyScript('${script.id}')">
                     <i class="fas fa-copy"></i>
-                    Копировать
+                    КОПИРОВАТЬ
                 </button>
                 <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); openScriptView('${script.id}')">
                     <i class="fas fa-eye"></i>
-                    Подробнее
+                    ПРОСМОТР
                 </button>
             </div>
         </div>
@@ -293,6 +253,13 @@ function formatDate(dateString) {
     if (days < 7) return `${days} дн назад`;
     
     return date.toLocaleDateString('ru-RU');
+}
+
+// Обновление статистики
+function updateStats() {
+    $('#scriptsCount').textContent = scripts.length;
+    const totalViews = scripts.reduce((acc, script) => acc + (script.views || 0), 0);
+    // Можно добавить больше статистики
 }
 
 // Управление тегами
@@ -324,89 +291,61 @@ function renderTags() {
     `).join('');
 }
 
-// Загрузка изображения
-$('#scriptImage').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentImage = e.target.result;
-            $('#imagePreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
 // Модальные окна
-function showLoginModal() {
-    $('#loginModal').classList.add('active');
-}
-
-function closeLoginModal() {
-    $('#loginModal').classList.remove('active');
-}
-
-function showRegisterModal() {
-    $('#registerModal').classList.add('active');
-}
-
-function closeRegisterModal() {
-    $('#registerModal').classList.remove('active');
-}
-
 function showUploadModal() {
     if (!currentUser) {
         showNotification('Для загрузки скриптов необходимо войти в систему', 'error');
-        showLoginModal();
         return;
     }
     
     currentTags = [];
-    currentImage = null;
     $('#uploadForm').reset();
     $('#tagsList').innerHTML = '';
-    $('#imagePreview').innerHTML = '';
     $('#uploadModal').classList.add('active');
+    $('#modal-overlay').classList.add('active');
 }
 
 function closeUploadModal() {
     $('#uploadModal').classList.remove('active');
+    $('#modal-overlay').classList.remove('active');
 }
 
 function openScriptView(scriptId) {
     const script = scripts.find(s => s.id === scriptId);
     if (!script) return;
-    
+
     // Увеличиваем счетчик просмотров
     script.views = (script.views || 0) + 1;
     
     $('#viewScriptTitle').textContent = script.title;
-    $('#viewScriptAuthor').textContent = `Автор: ${script.author}`;
-    $('#viewScriptDate').textContent = `Загружен: ${formatDate(script.createdAt)}`;
-    $('#viewScriptGame').textContent = `Игра: ${script.game}`;
     $('#viewScriptDescription').textContent = script.description;
     $('#viewScriptCode').textContent = script.code;
     
-    // Теги
-    const tagsContainer = $('#viewScriptTags');
-    tagsContainer.innerHTML = script.tags ? script.tags.map(tag => `
-        <span class="tag">${tag}</span>
-    `).join('') : '';
-    
-    // Изображение
-    const imageContainer = $('#viewScriptImage');
-    if (script.image) {
-        imageContainer.innerHTML = `<img src="${script.image}" alt="${script.title}" style="max-width: 100%; border-radius: 8px;">`;
-    } else {
-        imageContainer.innerHTML = '';
-    }
-    
+    $('#viewScriptMeta').innerHTML = `
+        <div class="script-meta">
+            <span class="script-author">
+                <i class="fas fa-user"></i>
+                ${script.author}
+            </span>
+            <span class="script-date">
+                <i class="fas fa-calendar"></i>
+                ${formatDate(script.createdAt)}
+            </span>
+            <span class="script-views">
+                <i class="fas fa-eye"></i>
+                ${script.views}
+            </span>
+        </div>
+    `;
+
     $('#scriptViewModal').classList.add('active');
-    saveData(); // Сохраняем обновленные просмотры
+    $('#modal-overlay').classList.add('active');
+    saveScripts(); // Сохраняем обновленные просмотры
 }
 
 function closeScriptViewModal() {
     $('#scriptViewModal').classList.remove('active');
+    $('#modal-overlay').classList.remove('active');
 }
 
 // Действия со скриптами
@@ -416,6 +355,15 @@ function copyScript(scriptId) {
     
     navigator.clipboard.writeText(script.code).then(() => {
         showNotification('Код скрипта скопирован в буфер обмена!');
+    }).catch(() => {
+        showNotification('Ошибка копирования', 'error');
+    });
+}
+
+function copyScriptCode() {
+    const code = $('#viewScriptCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        showNotification('Код скопирован в буфер обмена!');
     }).catch(() => {
         showNotification('Ошибка копирования', 'error');
     });
@@ -444,103 +392,66 @@ function uploadScript() {
     const title = $('#scriptTitle').value.trim();
     const description = $('#scriptDescription').value.trim();
     const code = $('#scriptCode').value.trim();
-    const game = $('#scriptGame').value;
     
-    if (!title || !description || !code || !game) {
+    if (!title || !description || !code) {
         showNotification('Заполните все обязательные поля', 'error');
         return;
     }
-    
+
     const newScript = {
         id: generateId(),
         title,
         description,
         code,
         author: currentUser.username,
-        game,
+        game: "Universal",
         tags: [...currentTags],
-        image: currentImage,
         createdAt: new Date().toISOString(),
         views: 0,
         likes: 0
     };
-    
+
     scripts.unshift(newScript);
-    saveData();
+    saveScripts();
     renderScripts();
+    updateStats();
     closeUploadModal();
     
     showNotification(`Скрипт "${title}" успешно загружен!`);
 }
 
-// Авторизация
-$('#loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const username = $('#loginUsername').value.trim();
-    const password = $('#loginPassword').value.trim();
-    
-    const user = users.find(u => 
-        (u.username === username || u.email === username) && 
-        u.password === password // В реальном приложении должно быть хэширование
-    );
-    
-    if (user) {
-        currentUser = user;
-        localStorage.setItem('currentUser', JSON.stringify(user));
+// Авторизация (упрощенная)
+function showLoginModal() {
+    const username = prompt('Введите имя пользователя:');
+    if (username) {
+        currentUser = { username: username.trim(), role: 'user' };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateAuthUI();
-        closeLoginModal();
-        showNotification(`Добро пожаловать, ${user.username}!`);
-    } else {
-        showNotification('Неверные учетные данные', 'error');
+        showNotification(`Добро пожаловать, ${username}!`);
     }
-});
+}
 
-$('#registerForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const username = $('#registerUsername').value.trim();
-    const email = $('#registerEmail').value.trim();
-    const password = $('#registerPassword').value.trim();
-    
-    if (users.find(u => u.username === username)) {
-        showNotification('Имя пользователя уже занято', 'error');
-        return;
+function showRegisterModal() {
+    const username = prompt('Введите имя пользователя для регистрации:');
+    if (username && username.length >= 3) {
+        currentUser = { username: username.trim(), role: 'user' };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateAuthUI();
+        showNotification('Регистрация успешна! Добро пожаловать!');
+    } else {
+        showNotification('Имя пользователя должно быть не менее 3 символов', 'error');
     }
-    
-    if (users.find(u => u.email === email)) {
-        showNotification('Email уже используется', 'error');
-        return;
-    }
-    
-    const newUser = {
-        id: generateId(),
-        username,
-        email,
-        password, // В реальном приложении должно быть хэширование
-        role: 'user',
-        joinedAt: new Date().toISOString(),
-        uploadedScripts: 0
-    };
-    
-    users.push(newUser);
-    currentUser = newUser;
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    saveData();
-    updateAuthUI();
-    closeRegisterModal();
-    showNotification('Регистрация успешна! Добро пожаловать!');
-});
+}
 
 function updateAuthUI() {
     const authButtons = $('.auth-buttons');
     if (currentUser) {
         authButtons.innerHTML = `
-            <div class="user-menu">
-                <span style="color: var(--text-secondary);">Привет, ${currentUser.username}!</span>
-                <button class="btn btn-outline btn-small" onclick="logout()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: var(--muted); font-size: 12px;">Привет, ${currentUser.username}!</span>
+                <button class="btn btn-small" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
-                    Выйти
+                    ВЫЙТИ
                 </button>
             </div>
         `;
@@ -555,41 +466,49 @@ function logout() {
 }
 
 // Переключение темы
-$('#themeToggle').addEventListener('click', function() {
-    const body = document.body;
-    const isDark = body.classList.contains('dark-theme');
-    const icon = $('#themeToggle i');
-    
-    if (isDark) {
-        body.classList.remove('dark-theme');
-        body.classList.add('light-theme');
-        icon.className = 'fas fa-sun';
-        localStorage.setItem('theme', 'light');
-    } else {
-        body.classList.remove('light-theme');
-        body.classList.add('dark-theme');
-        icon.className = 'fas fa-moon';
-        localStorage.setItem('theme', 'dark');
-    }
-});
-
-// Загрузка сохраненной темы
 function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     const body = document.body;
     const icon = $('#themeToggle i');
     
-    body.classList.add(savedTheme + '-theme');
-    icon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    if (savedTheme === 'light') {
+        body.classList.add('theme-light');
+        icon.className = 'fas fa-sun';
+    } else {
+        body.classList.add('theme-dark');
+        icon.className = 'fas fa-moon';
+    }
 }
 
-// Настройка обработчиков событий
+$('#themeToggle').addEventListener('click', function() {
+    const body = document.body;
+    const isLight = body.classList.contains('theme-light');
+    const icon = $('#themeToggle i');
+    
+    if (isLight) {
+        body.classList.remove('theme-light');
+        body.classList.add('theme-dark');
+        icon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        body.classList.remove('theme-dark');
+        body.classList.add('theme-light');
+        icon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'light');
+    }
+    
+    // Анимация переключения
+    this.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+        this.style.transform = '';
+    }, 500);
+});
+
+// Обработчики событий
 function setupEventListeners() {
     // Закрытие модалок по клику вне
     document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeLoginModal();
-            closeRegisterModal();
+        if (event.target.classList.contains('modal-overlay')) {
             closeUploadModal();
             closeScriptViewModal();
         }
@@ -604,17 +523,20 @@ function setupEventListeners() {
     });
     
     // Поиск
-    $('#searchInput').addEventListener('input', function(event) {
+    $('#heroSearch').addEventListener('input', function(event) {
+        const searchTerm = event.target.value.toLowerCase();
         // Реализация поиска
     });
     
-    $('#heroSearch').addEventListener('input', function(event) {
-        // Реализация поиска в hero секции
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.site-header');
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
     });
 }
 
-// Загрузка темы при инициализации
-loadTheme();
-
-// Обновляем счетчики каждые 30 секунд
-setInterval(updateOnlineCounters, 30000);
+console.log('%c🚀 Gord Scripts Enhanced Loaded!', 'color:#3AA655;font-size:16px;font-weight:bold;');
