@@ -12,6 +12,7 @@ const CONFIG = {
 let scripts = [];
 let currentUser = null;
 let currentTags = [];
+let currentScriptId = null;
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', function() {
@@ -357,6 +358,9 @@ function openScriptView(scriptId) {
     const script = scripts.find(s => s.id === scriptId);
     if (!script) return;
 
+    // Сохраняем ID текущего скрипта
+    currentScriptId = scriptId;
+    
     // Увеличиваем счетчик просмотров
     script.views = (script.views || 0) + 1;
     saveScripts();
@@ -463,6 +467,12 @@ function shareScript(scriptId) {
     }
 }
 
+function shareCurrentScript() {
+    if (currentScriptId) {
+        shareScript(currentScriptId);
+    }
+}
+
 function copyScriptCode() {
     const code = document.getElementById('viewScriptCode');
     if (!code) return;
@@ -478,7 +488,7 @@ function downloadScript() {
     
     if (!title || !code) return;
 
-    const script = scripts.find(s => s.title === title.textContent);
+    const script = scripts.find(s => s.id === currentScriptId);
     if (script) {
         script.downloads = (script.downloads || 0) + 1;
         saveScripts();
