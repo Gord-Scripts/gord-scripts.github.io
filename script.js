@@ -508,6 +508,27 @@ function downloadScript() {
     showNotification(`Скрипт "${title.textContent}" скачан!`);
 }
 
+// Удаление скрипта
+function deleteCurrentScript() {
+    if (!currentScriptId) return;
+    
+    const script = scripts.find(s => s.id === currentScriptId);
+    if (!script) return;
+    
+    if (!currentUser || script.author !== currentUser.username) {
+        showNotification('Вы можете удалять только свои скрипты!', 'error');
+        return;
+    }
+    
+    if (confirm(`Вы уверены, что хотите удалить скрипт "${script.title}"?`)) {
+        scripts = scripts.filter(s => s.id !== currentScriptId);
+        saveScripts();
+        renderScripts();
+        closeScriptViewModal();
+        showNotification(`Скрипт "${script.title}" удален!`);
+    }
+}
+
 // Загрузка скрипта
 function uploadScript() {
     const title = document.getElementById('scriptTitle');
@@ -622,15 +643,16 @@ function logout() {
 // Переключение темы
 function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
-    const body = document.body;
-    const icon = document.querySelector('#themeToggle i');
+    const checkbox = document.getElementById('themeCheckbox');
     
     if (savedTheme === 'light') {
-        body.classList.add('theme-light');
-        if (icon) icon.className = 'fas fa-sun';
+        document.body.classList.add('theme-light');
+        document.body.classList.remove('theme-dark');
+        if (checkbox) checkbox.checked = true;
     } else {
-        body.classList.add('theme-dark');
-        if (icon) icon.className = 'fas fa-moon';
+        document.body.classList.add('theme-dark');
+        document.body.classList.remove('theme-light');
+        if (checkbox) checkbox.checked = false;
     }
 }
 
@@ -653,31 +675,19 @@ function setupEventListeners() {
         });
     }
     
-    // Переключение темы
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-            const body = document.body;
-            const isLight = body.classList.contains('theme-light');
-            const icon = this.querySelector('i');
-            
-            if (isLight) {
-                body.classList.remove('theme-light');
-                body.classList.add('theme-dark');
-                if (icon) icon.className = 'fas fa-moon';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                body.classList.remove('theme-dark');
-                body.classList.add('theme-light');
-                if (icon) icon.className = 'fas fa-sun';
+    // Переключение темы через чекбокс
+    const themeCheckbox = document.getElementById('themeCheckbox');
+    if (themeCheckbox) {
+        themeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.remove('theme-dark');
+                document.body.classList.add('theme-light');
                 localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.remove('theme-light');
+                document.body.classList.add('theme-dark');
+                localStorage.setItem('theme', 'dark');
             }
-            
-            // Анимация переключения
-            this.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 500);
         });
     }
     
