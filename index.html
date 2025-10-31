@@ -1,1644 +1,1155 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScriptHub - Платформа для обмена скриптами</title>
-    <style>
-        /* === ГЛОБАЛЬНЫЕ СТИЛИ И СБРОС === */
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --dark-color: #1a252f;
-            --light-color: #ecf0f1;
-            --text-color: #2c3e50;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-        }
-
-        .dark-mode {
-            --text-color: #ecf0f1;
-            --bg-color: #1a252f;
-            --card-bg: #2c3e50;
-            --shadow: 0 4px 6px rgba(0,0,0,0.3);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background: var(--bg-color);
-            min-height: 100vh;
-            transition: var(--transition);
-        }
-
-        /* === КОМПОНЕНТЫ ИНТЕРФЕЙСА === */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Навигация */
-        .navbar {
-            background: var(--gradient);
-            padding: 1rem 0;
-            box-shadow: var(--shadow-lg);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logo-icon {
-            font-size: 2rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* Основной контент */
-        .main-content {
-            margin-top: 80px;
-            padding: 2rem 0;
-            min-height: calc(100vh - 80px);
-        }
-
-        /* Секция героя */
-        .hero-section {
-            text-align: center;
-            padding: 4rem 0;
-            background: var(--gradient-secondary);
-            color: white;
-            border-radius: var(--border-radius);
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
-        }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .hero-content p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Кнопки */
-        .btn {
-            padding: 0.875rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2980b9;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #219a52;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn-outline:hover {
-            background: white;
-            color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-
-        /* Поиск и фильтры */
-        .search-section {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 3rem;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 300px;
-            position: relative;
-        }
-
-        .search-input i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-        }
-
-        .search-input input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .search-input input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        .filters-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .form-select {
-            padding: 1rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-        }
-
-        /* Сетка скриптов */
-        .scripts-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: var(--primary-color);
-        }
-
-        .scripts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .script-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border: 1px solid #e1e8ed;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .script-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--secondary-color);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .script-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .script-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .script-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .script-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
-        }
-
-        .script-rating {
-            background: var(--warning-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .script-description {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .script-code-preview {
-            background: #1e1e1e;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            overflow-x: auto;
-        }
-
-        .script-code-preview pre {
-            color: #d4d4d4;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        .script-meta {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .script-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .script-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #e1f5fe;
-            color: #01579b;
-            padding: 0.375rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .tag:hover {
-            background: #b3e5fc;
-            transform: translateY(-1px);
-        }
-
-        .script-actions {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .script-actions .btn {
-            padding: 0.625rem 1.25rem;
-            font-size: 0.9rem;
-            flex: 1;
-            justify-content: center;
-        }
-
-        /* Формы */
-        .form-container {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--primary-color);
-            font-size: 2.2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 1rem;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-            font-family: inherit;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        .form-textarea {
-            min-height: 150px;
-            resize: vertical;
-            line-height: 1.5;
-        }
-
-        .code-editor {
-            font-family: 'Courier New', monospace;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border: 2px solid #333;
-        }
-
-        .code-editor:focus {
-            border-color: var(--secondary-color);
-        }
-
-        /* Админ-панель */
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card span {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--secondary-color);
-        }
-
-        /* Уведомления */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            color: white;
-            z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .notification-success {
-            background: var(--success-color);
-        }
-
-        .notification-error {
-            background: var(--accent-color);
-        }
-
-        .notification-warning {
-            background: var(--warning-color);
-        }
-
-        /* Модальные окна */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: auto;
-            box-shadow: var(--shadow-lg);
-            animation: scaleIn 0.3s ease-out;
-            width: 800px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e1e8ed;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
-            transition: var(--transition);
-            padding: 0.25rem;
-            border-radius: 4px;
-        }
-
-        .modal-close:hover {
-            color: var(--accent-color);
-            background: rgba(231, 76, 60, 0.1);
-        }
-
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 1200px) {
-            .scripts-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-            
-            .search-container {
-                flex-direction: column;
-            }
-            
-            .search-input {
-                min-width: 100%;
-            }
-            
-            .filters-row {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .scripts-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .hero-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-actions .btn {
-                width: 200px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .script-card {
-                padding: 1.25rem;
-            }
-            
-            .form-container {
-                padding: 1.5rem;
-            }
-            
-            .modal-content {
-                padding: 1.5rem;
-            }
-            
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-        }
-
-        /* Стили для темной темы */
-        body.dark-mode .form-input,
-        body.dark-mode .form-textarea,
-        body.dark-mode .form-select {
-            background: #2c3e50;
-            border-color: #34495e;
-            color: var(--light-color);
-        }
-
-        body.dark-mode .script-code-preview {
-            background: #0d1117;
-        }
-
-        body.dark-mode .tag {
-            background: #34495e;
-            color: var(--light-color);
-        }
-
-        /* Дополнительные утилитарные классы */
-        .text-center { text-align: center; }
-        .mb-1 { margin-bottom: 1rem; }
-        .mb-2 { margin-bottom: 2rem; }
-        .mt-1 { margin-top: 1rem; }
-        .mt-2 { margin-top: 2rem; }
-        .hidden { display: none; }
-
-        /* Стили для загрузки и состояний */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* Стили для скроллбара */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #2980b9;
-        }
-
-        /* Дополнительные стили для улучшения UX */
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .tooltip:hover::after {
-            opacity: 1;
-        }
-
-        /* Стили для пагинации */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin: 2rem 0;
-        }
-
-        .page-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid #e1e8ed;
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: var(--transition);
-        }
-
-        .page-btn.active {
-            background: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
-        }
-
-        .page-btn:hover:not(.active) {
-            background: #f8f9fa;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScriptHub — Платформа для обмена скриптами</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================================================
+       ScriptHub — STYLE.CSS
+       Java Launcher Inspired Design
+       ============================================================================ */
+
+    /* =========================
+       0. Base variables & reset
+       ========================= */
+    :root {
+      /* color palette */
+      --bg-900: #0f0f0f;
+      --bg-850: #131313;
+      --bg-800: #171717;
+      --bg-700: #1e1e1e;
+      --bg-600: #242424;
+      --card: #222425;
+      --muted: #bdbdbd;
+      --text: #f7f7f7;
+      --accent: #3AA655;     /* Minecraft green */
+      --accent-2: #2A5A19;
+      --danger: #e86e6e;
+      --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --shadow: 0 14px 50px rgba(0,0,0,0.65);
+      --soft-shadow: 0 8px 28px rgba(0,0,0,0.55);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --max-width: 1200px;
+      --container-gap: 20px;
+      --transition: 220ms cubic-bezier(.2,.9,.3,1);
+
+      /* typography */
+      --ff-heading: 'Press Start 2P', monospace;
+      --ff-ui: 'Roboto', system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial;
+      --fs-hero: 22px;
+      --fs-h1: 26px;
+      --fs-h2: 18px;
+      --fs-body: 15px;
+
+      /* spacing */
+      --sp-xxs: 4px;
+      --sp-xs: 8px;
+      --sp-sm: 12px;
+      --sp-md: 18px;
+      --sp-lg: 28px;
+      --sp-xl: 44px;
+      --sp-xxl: 64px;
+
+      /* z-index */
+      --z-header: 1000;
+      --z-modal: 2000;
+    }
+
+    /* Basic reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: var(--ff-ui);
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg-900), var(--bg-800));
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.45;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* accessibility focus */
+    :focus { outline: 3px solid rgba(58,166,85,0.14); outline-offset: 2px; }
+
+    /* global anchor */
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; opacity: 0.95; }
+
+    /* containers */
+    .container {
+      width: 92%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding-left: var(--container-gap);
+      padding-right: var(--container-gap);
+    }
+
+    /* utilities */
+    .hidden { display: none !important; }
+    .u-center { text-align: center; }
+
+    /* =====================
+       Header / Navigation
+       ===================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-header);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.15));
+      padding: 12px 0;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .site-header.scrolled {
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid #3AA655;
+    }
+    .header-inner {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    /* brand */
+    .brand {
+      display:flex;
+      gap: 12px;
+      align-items:center;
+    }
+    .brand__logo {
+      width:56px;
+      height:56px;
+      object-fit:cover;
+      border-radius: 8px;
+      box-shadow: var(--soft-shadow);
+      background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.18));
+      display:inline-block;
+      flex-shrink:0;
+      transition: all 0.3s ease;
+    }
+    .brand__logo:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,0,0,0.4); }
+    .brand__text { line-height: 1; }
+    .brand__title {
+      font-family: var(--ff-heading);
+      font-size: 18px;
+      margin:0;
+      letter-spacing: 0.6px;
+    }
+    .brand__title .accent { color: var(--accent); }
+    .brand__sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* navigation */
+    .main-nav {
+      display:flex;
+      gap: 16px;
+      align-items:center;
+    }
+    .main-nav a {
+      color: rgba(255,255,255,0.92);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all var(--transition);
+    }
+    .main-nav a.cta {
+      background: var(--accent);
+      color: #07120a;
+      border: 2px solid var(--accent-2);
+      padding: 9px 14px;
+    }
+    .main-nav a.donate-nav {
+      background: linear-gradient(180deg, #47c96a, #2fa24b);
+      color: #07120a;
+      border: 2px solid var(--accent-2);
+    }
+    .main-nav a:hover { transform: translateY(-3px); }
+
+    /* header actions */
+    .header-actions { display:flex; gap: 8px; align-items:center; }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: 18px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor:pointer;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .icon-btn:hover { 
+      background: rgba(255,255,255,0.02);
+      transform: rotate(180deg) scale(1.1);
+    }
+
+    /* =====================
+       HERO
+       ===================== */
+    .hero {
+      position: relative;
+      padding: calc(var(--sp-xl) + 10px) 0 var(--sp-xxl);
+      overflow: visible;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+    }
+    .hero__bg {
+      position:absolute;
+      inset:0;
+      background: linear-gradient(45deg, rgba(58,166,85,0.1), rgba(42,90,25,0.05));
+      opacity: 0.06;
+      z-index:0;
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: 1fr 460px;
+      gap: 28px;
+      align-items: center;
+    }
+
+    /* hero left - text area */
+    .hero-meta { padding-right: 6%; animation: fadeInUp 0.8s ease-out; }
+    .brand-hero { display:flex; align-items:center; gap:12px; }
+    .h-subtitle {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-hero);
+      margin: 0 0 8px 0;
+      line-height: 1.1;
+    }
+
+    /* hero CTA area */
+    .hero-actions { margin-top: 18px; display:flex; gap: 12px; align-items:center; }
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor:pointer;
+      transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+      border: 2px solid transparent;
+    }
+    .btn.primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color:#07120a;
+      box-shadow: 0 10px 28px rgba(46,90,34,0.28);
+    }
+    .btn.primary:hover { transform: translateY(-4px); }
+    .btn.ghost {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.06);
+      color: inherit;
+    }
+    .btn.small { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
+
+    /* Minecraft-style pixel border animation */
+    @keyframes pixel-glow {
+      0% { box-shadow: 0 0 0 0 rgba(58, 166, 85, 0.7); }
+      50% { box-shadow: 0 0 0 6px rgba(58, 166, 85, 0.3); }
+      100% { box-shadow: 0 0 0 0 rgba(58, 166, 85, 0); }
+    }
+
+    @keyframes pixel-border {
+      0% { border-color: #3AA655; }
+      25% { border-color: #47c96a; }
+      50% { border-color: #2fa24b; }
+      75% { border-color: #2A5A19; }
+      100% { border-color: #3AA655; }
+    }
+
+    /* Download button special effects */
+    .download-btn {
+      display:inline-block;
+      background: linear-gradient(180deg, #3AA655, #2A5A19);
+      color:#07120a;
+      padding: 13px 22px;
+      border-radius: 12px;
+      font-weight:900;
+      font-family: var(--ff-heading);
+      border: 3px solid #3AA655;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pixel-border 3s infinite;
+    }
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.8s;
+    }
+    .download-btn:hover::before { left: 100%; }
+    .download-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      animation: pixel-glow 1.5s infinite, pixel-border 1.5s infinite;
+    }
+
+    /* GitHub button enhanced */
+    .btn.ghost.github-btn {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--accent);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--ff-heading);
+      letter-spacing: 1px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn.ghost.github-btn:hover {
+      background: var(--accent);
+      color: #07120a;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(58, 166, 85, 0.3);
+      animation: pixel-glow 1.5s infinite;
+    }
+
+    /* hero right card */
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.18));
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.03);
+      max-width: 460px;
+      margin-left: auto;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    .hero-card .preview {
+      height: 260px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.35));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+    }
+    .preview .app-image {
+      width: 92%;
+      height: 92%;
+      background: linear-gradient(45deg, #3AA655, #47c96a);
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+    }
+
+    /* hero meta small print */
+    .meta-row { display:flex; gap:12px; color:var(--muted); font-size:13px; margin-top: 12px; align-items:center; }
+
+    /* =========================
+       Sections / Layout blocks
+       ========================= */
+    .section { padding: 44px 0; }
+    .section--pad { padding: 56px 0; }
+    .section--alt { background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+    .section--dark { background: linear-gradient(180deg, var(--bg-800), var(--bg-900)); }
+    .section-title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-h1);
+      text-align:center;
+      margin: 0;
+    }
+    .section-sub {
+      color: var(--muted);
+      text-align:center;
+      margin-top: 10px;
+      margin-bottom: 22px;
+    }
+
+    /* Page load animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* features grid */
+    .features-grid {
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .feature-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--soft-shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+      animation: fadeInUp 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+    .feature-icon { font-size: 26px; margin-bottom: 12px; }
+    .feature-card h4 { margin: 0 0 8px 0; font-family: var(--ff-heading); font-size: 12px; }
+    .feature-card p { color: var(--muted); font-size: 14px; }
+
+    /* Scripts Grid */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .script-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--soft-shadow);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .script-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .script-card:hover::before { transform: scaleY(1); }
+    .script-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow);
+      border-color: var(--accent);
+    }
+
+    .script-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .script-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+      font-family: var(--ff-heading);
+    }
+
+    .script-rating {
+      background: var(--accent);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .script-description {
+      color: var(--muted);
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .script-code-preview {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #333;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .script-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .script-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .tag {
+      background: rgba(58, 166, 85, 0.2);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      border: 1px solid rgba(58, 166, 85, 0.3);
+    }
+
+    .script-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .script-actions .btn {
+      flex: 1;
+      justify-content: center;
+      font-size: 0.8rem;
+      padding: 8px 12px;
+    }
+
+    /* Search Section */
+    .search-section {
+      background: var(--card);
+      padding: 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--soft-shadow);
+      margin: 30px 0;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+    }
+
+    .search-input input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: var(--bg-800);
+      color: var(--text);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .search-input input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(58, 166, 85, 0.1);
+    }
+
+    .filters-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-select {
+      padding: 12px 15px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: var(--bg-800);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Forms */
+    .form-container {
+      background: var(--card);
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--ff-heading);
+      font-size: 0.9rem;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: var(--bg-800);
+      color: var(--text);
+      font-size: 1rem;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(58, 166, 85, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .code-editor {
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+    }
+
+    /* Stats */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: var(--card);
+      padding: 25px;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: var(--soft-shadow);
+      transition: var(--transition);
+      border-left: 4px solid var(--accent);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card h3 {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card span {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      z-index: 10000;
+      animation: slideInRight 0.3s ease-out;
+      box-shadow: var(--shadow);
+    }
+
+    .notification-success { background: var(--accent); }
+    .notification-error { background: var(--danger); }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Footer */
+    .site-footer {
+      background: linear-gradient(180deg, rgba(0,0,0,0.22), rgba(0,0,0,0.48));
+      padding: 28px 0 12px;
+      margin-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.03);
+    }
+    .footer-grid {
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .footer-logo { width:56px; height:56px; object-fit:cover; border-radius:8px; }
+    .footer-bottom { padding:10px 0; border-top: 1px solid rgba(255,255,255,0.03); margin-top:14px; text-align:center; }
+
+    /* Preloader */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: var(--bg-900);
+      z-index: 4000;
+      transition: opacity 0.8s ease;
+    }
+    .preloader.hidden { opacity: 0; pointer-events:none; }
+    .loader {
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      box-shadow: 0 16px 48px rgba(42,90,25,0.28);
+      animation: loader-rotate 1.2s linear infinite, loader-pulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes loader-rotate { 
+      0% { transform: rotate(0deg) scale(1); } 
+      100% { transform: rotate(360deg) scale(1); } 
+    }
+    @keyframes loader-pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 18px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .scripts-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .brand__title { font-size: 14px; }
+      .main-nav { display: none; }
+      .search-container { flex-direction: column; }
+      .search-input { min-width: 100%; }
+    }
+  </style>
 </head>
-<body>
-    <!-- Навигация -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <a href="#" class="logo">
-                    <span class="logo-icon">⚡</span>
-                    ScriptHub
-                </a>
-                <ul class="nav-links">
-                    <li><a href="#home">Главная</a></li>
-                    <li><a href="#scripts">Скрипты</a></li>
-                    <li><a href="#submit">Добавить скрипт</a></li>
-                    <li><a href="#admin">Статистика</a></li>
-                    <button class="theme-toggle" onclick="app.toggleTheme()">
-                        <span id="theme-icon">🌙</span>
-                    </button>
-                </ul>
+<body class="theme-dark">
+  <!-- Preloader -->
+  <div id="preloader" class="preloader">
+    <div class="loader" role="status" aria-label="Loading"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand__logo" style="background: linear-gradient(45deg, #3AA655, #47c96a);"></div>
+        <div>
+          <h1 class="brand__title">Script<span class="accent">Hub</span></h1>
+          <div class="brand__sub">Платформа для обмена скриптами</div>
+        </div>
+      </div>
+
+      <nav class="main-nav" role="navigation" aria-label="Main navigation">
+        <a href="#home">ГЛАВНАЯ</a>
+        <a href="#scripts" class="cta">СКРИПТЫ</a>
+        <a href="#submit">ДОБАВИТЬ</a>
+        <a href="#stats">СТАТИСТИКА</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="icon-btn" title="Переключить тему">🌓</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero" id="home" aria-label="Hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-meta">
+          <div class="brand-hero">
+            <div class="brand__logo" style="background: linear-gradient(45deg, #3AA655, #47c96a); width: 64px; height: 64px;"></div>
+            <div>
+              <div class="h-subtitle">ScriptHub — платформа для разработчиков</div>
+              <div class="brand__sub" style="margin-top:6px;">Делитесь. Создавайте. Вдохновляйтесь.</div>
             </div>
+          </div>
+
+          <h2 class="title-large" style="margin-top:18px; font-family: var(--ff-heading); font-size: 20px;">
+            НАЙДИ ИДЕАЛЬНЫЕ СКРИПТЫ ДЛЯ СВОИХ ПРОЕКТОВ
+          </h2>
+          <p class="lead" style="margin-top:12px;">
+            ScriptHub — это сообщество разработчиков, где можно найти, поделиться и обсудить скрипты для автоматизации, 
+            игр, веб-разработки и многого другого. Присоединяйся к нашему растущему сообществу!
+          </p>
+
+          <div class="hero-actions" style="margin-top:18px;">
+            <a href="#scripts" class="download-btn" role="button">
+              🔍 НАЙТИ СКРИПТЫ
+            </a>
+            <a href="#submit" class="btn primary" role="button">➕ ДОБАВИТЬ СВОЙ</a>
+            <a class="btn ghost github-btn" href="https://github.com" target="_blank" rel="noopener">📁 GITHUB</a>
+          </div>
+
+          <div class="meta-row" style="margin-top:14px;">
+            <span>✔ БЕСПЛАТНО</span>
+            <span>✔ ОТКРЫТЫЙ КОД</span>
+            <span>✔ СООБЩЕСТВО</span>
+          </div>
         </div>
-    </nav>
 
-    <!-- Основной контент -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Секция героя -->
-            <section id="home" class="hero-section fade-in">
-                <div class="hero-content">
-                    <h1>Крупнейшая библиотека скриптов</h1>
-                    <p>Найдите идеальные решения для ваших проектов среди тысяч скриптов от сообщества разработчиков</p>
-                    <div class="hero-actions">
-                        <a href="#scripts" class="btn btn-primary">
-                            <span>🔍</span>
-                            Найти скрипты
-                        </a>
-                        <a href="#submit" class="btn btn-outline">
-                            <span>➕</span>
-                            Добавить свой
-                        </a>
-                    </div>
-                </div>
-            </section>
+        <aside class="hero-card" aria-hidden="true">
+          <div class="preview">
+            <div class="app-image"></div>
+          </div>
+          <div style="margin-top:14px; display:flex; justify-content:space-between; gap:12px; align-items:center;">
+            <div style="font-size:13px; color:var(--muted);">СКРИПТОВ: <strong>1,247</strong></div>
+            <div style="font-size:13px; color:var(--muted);">РАЗРАБОТЧИКОВ: <strong>589</strong></div>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-            <!-- Поиск и фильтры -->
-            <section class="search-section">
-                <div class="search-container">
-                    <div class="search-input">
-                        <span>🔍</span>
-                        <input type="text" id="searchInput" placeholder="Поиск по названию, описанию, тегам или автору...">
-                    </div>
-                    <div class="filters-row">
-                        <select id="categoryFilter" class="form-select">
-                            <option value="">Все категории</option>
-                            <option value="game">🎮 Игровые скрипты</option>
-                            <option value="utility">🛠️ Утилиты</option>
-                            <option value="automation">⚡ Автоматизация</option>
-                            <option value="ai">🤖 ИИ и Машинное обучение</option>
-                            <option value="web">🌐 Веб-разработка</option>
-                        </select>
-                        <select id="sortFilter" class="form-select">
-                            <option value="newest">🆕 Сначала новые</option>
-                            <option value="popular">🔥 Популярные</option>
-                            <option value="rating">⭐ По рейтингу</option>
-                            <option value="views">👁️ По просмотрам</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Сетка скриптов -->
-            <section id="scripts" class="scripts-section">
-                <h2>📜 Последние скрипты</h2>
-                <div id="scriptsContainer" class="scripts-grid">
-                    <!-- Скрипты будут загружены здесь динамически -->
-                </div>
-                <div class="pagination" id="pagination">
-                    <!-- Пагинация будет сгенерирована здесь -->
-                </div>
-            </section>
-
-            <!-- Форма добавления скрипта -->
-            <section id="submit" class="submit-section">
-                <div class="form-container">
-                    <h2>📝 Добавить новый скрипт</h2>
-                    <form id="scriptForm" class="script-form">
-                        <div class="form-group">
-                            <label for="scriptTitle" class="form-label">Название скрипта *</label>
-                            <input type="text" id="scriptTitle" class="form-input" required 
-                                   placeholder="Введите понятное название скрипта">
-                        </div>
-                        <div class="form-group">
-                            <label for="scriptDescription" class="form-label">Описание *</label>
-                            <textarea id="scriptDescription" class="form-textarea" required
-                                      placeholder="Опишите что делает ваш скрипт, для чего он предназначен..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="scriptCode" class="form-label">Код скрипта *</label>
-                            <textarea id="scriptCode" class="form-textarea code-editor" required
-                                      placeholder="Вставьте код вашего скрипта здесь..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="scriptAuthor" class="form-label">Автор</label>
-                            <input type="text" id="scriptAuthor" class="form-input" 
-                                   placeholder="Ваше имя или псевдоним">
-                        </div>
-                        <div class="form-group">
-                            <label for="scriptTags" class="form-label">Теги (через запятую)</label>
-                            <input type="text" id="scriptTags" class="form-input" 
-                                   placeholder="автокликер, игра, полезное, автоматизация">
-                        </div>
-                        <div class="form-group">
-                            <label for="scriptCategory" class="form-label">Категория</label>
-                            <select id="scriptCategory" class="form-select">
-                                <option value="utility">🛠️ Утилиты</option>
-                                <option value="game">🎮 Игровые скрипты</option>
-                                <option value="automation">⚡ Автоматизация</option>
-                                <option value="ai">🤖 ИИ и Машинное обучение</option>
-                                <option value="web">🌐 Веб-разработка</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            <span>🚀</span>
-                            Опубликовать скрипт
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Статистика -->
-            <section id="admin" class="admin-section">
-                <h2 class="text-center">📊 Статистика платформы</h2>
-                <div class="admin-stats">
-                    <div class="stat-card">
-                        <h3>Всего скриптов</h3>
-                        <span id="totalScripts">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Уникальных авторов</h3>
-                        <span id="totalUsers">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Всего лайков</h3>
-                        <span id="totalLikes">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Просмотров</h3>
-                        <span id="totalViews">0</span>
-                    </div>
-                </div>
-            </section>
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="container">
+        <div class="search-container">
+          <div class="search-input">
+            <input type="text" id="searchInput" placeholder="Поиск скриптов по названию, описанию или тегам...">
+          </div>
+          <div class="filters-row">
+            <select id="categoryFilter" class="form-select">
+              <option value="">Все категории</option>
+              <option value="game">🎮 Игровые скрипты</option>
+              <option value="automation">⚡ Автоматизация</option>
+              <option value="web">🌐 Веб-разработка</option>
+              <option value="utility">🛠️ Утилиты</option>
+            </select>
+            <select id="sortFilter" class="form-select">
+              <option value="newest">🆕 Сначала новые</option>
+              <option value="popular">🔥 Популярные</option>
+              <option value="rating">⭐ По рейтингу</option>
+            </select>
+          </div>
         </div>
-    </main>
+      </div>
+    </section>
 
-    <script>
-        // === СИСТЕМА УПРАВЛЕНИЯ ДАННЫМИ ===
-        class ScriptManager {
-            constructor() {
-                this.scripts = this.loadScripts();
-                this.currentPage = 1;
-                this.scriptsPerPage = 9;
-                this.init();
-            }
+    <!-- Scripts Section -->
+    <section id="scripts" class="section">
+      <div class="container">
+        <h2 class="section-title">ПОПУЛЯРНЫЕ СКРИПТЫ</h2>
+        <p class="section-sub">Лучшие скрипты от сообщества разработчиков</p>
 
-            init() {
-                this.generateSampleData();
-                this.renderScripts();
-                this.setupEventListeners();
-                this.updateStats();
-                this.renderPagination();
-            }
+        <div class="scripts-grid">
+          <!-- Script 1 -->
+          <div class="script-card">
+            <div class="script-header">
+              <h3 class="script-title">АВТОКЛИКЕР PRO</h3>
+              <span class="script-rating">⭐ 4.8</span>
+            </div>
+            <p class="script-description">
+              Умный автокликер с настройкой интервалов, горячими клавишами и продвинутыми функциями для автоматизации кликов.
+            </p>
+            <div class="script-code-preview">
+              function AutoClicker() {<br>
+              &nbsp;&nbsp;const config = {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;interval: 100,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;hotkey: 'F6'<br>
+              &nbsp;&nbsp;};<br>
+              }
+            </div>
+            <div class="script-meta">
+              <span>👤 DevMaster</span>
+              <span>❤️ 142</span>
+              <span>👁️ 2.5K</span>
+            </div>
+            <div class="script-tags">
+              <span class="tag">автоматизация</span>
+              <span class="tag">игры</span>
+              <span class="tag">продуктивность</span>
+            </div>
+            <div class="script-actions">
+              <button class="btn primary">СКАЧАТЬ</button>
+              <button class="btn ghost">ПОДРОБНЕЕ</button>
+            </div>
+          </div>
 
-            loadScripts() {
-                try {
-                    const stored = localStorage.getItem('scriptHub_scripts');
-                    return stored ? JSON.parse(stored) : [];
-                } catch (error) {
-                    console.error('Ошибка загрузки скриптов:', error);
-                    return [];
-                }
-            }
+          <!-- Script 2 -->
+          <div class="script-card">
+            <div class="script-header">
+              <h3 class="script-title">WEB SCRAPER</h3>
+              <span class="script-rating">⭐ 4.6</span>
+            </div>
+            <p class="script-description">
+              Мощный веб-скрапер для сбора данных с поддержкой прокси, обработки JavaScript и экспорта в различные форматы.
+            </p>
+            <div class="script-code-preview">
+              const scraper = new WebScraper({<br>
+              &nbsp;&nbsp;timeout: 30000,<br>
+              &nbsp;&nbsp;retries: 3<br>
+              });<br>
+              await scraper.scrape(url);
+            </div>
+            <div class="script-meta">
+              <span>👤 DataHunter</span>
+              <span>❤️ 89</span>
+              <span>👁️ 1.8K</span>
+            </div>
+            <div class="script-tags">
+              <span class="tag">веб</span>
+              <span class="tag">данные</span>
+              <span class="tag">python</span>
+            </div>
+            <div class="script-actions">
+              <button class="btn primary">СКАЧАТЬ</button>
+              <button class="btn ghost">ПОДРОБНЕЕ</button>
+            </div>
+          </div>
 
-            saveScripts() {
-                try {
-                    localStorage.setItem('scriptHub_scripts', JSON.stringify(this.scripts));
-                } catch (error) {
-                    console.error('Ошибка сохранения скриптов:', error);
-                }
-            }
+          <!-- Script 3 -->
+          <div class="script-card">
+            <div class="script-header">
+              <h3 class="script-title">DISCORD BOT</h3>
+              <span class="script-rating">⭐ 4.9</span>
+            </div>
+            <p class="script-description">
+              Многофункциональный Discord бот с модерацией, музыкой, играми и системой уровней. Легко настраивается.
+            </p>
+            <div class="script-code-preview">
+              const bot = new DiscordBot({<br>
+              &nbsp;&nbsp;prefix: '!',<br>
+              &nbsp;&nbsp;modules: ['music', 'mod']<br>
+              });<br>
+              bot.login(TOKEN);
+            </div>
+            <div class="script-meta">
+              <span>👤 BotCreator</span>
+              <span>❤️ 256</span>
+              <span>👁️ 3.2K</span>
+            </div>
+            <div class="script-tags">
+              <span class="tag">discord</span>
+              <span class="tag">бот</span>
+              <span class="tag">javascript</span>
+            </div>
+            <div class="script-actions">
+              <button class="btn primary">СКАЧАТЬ</button>
+              <button class="btn ghost">ПОДРОБНЕЕ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            generateSampleData() {
-                if (this.scripts.length === 0) {
-                    const sampleScripts = [
-                        {
-                            id: this.generateId(),
-                            title: "Умный автокликер v3.0",
-                            description: "Продвинутый автокликер с искусственным интеллектом, настройкой интервалов, горячими клавишами и системой распознавания элементов интерфейса. Поддерживает сложные сценарии кликов и адаптивные алгоритмы работы.",
-                            code: `function SmartAutoClicker() {
-    const config = {
-        interval: 100,
-        hotkey: 'F6',
-        smartDetection: true,
-        maxClicks: 1000,
-        adaptiveMode: true
-    };
-    
-    let clickCount = 0;
-    
-    function initialize() {
-        console.log('🚀 Умный автокликер инициализирован');
-        setupEventListeners();
-        loadConfiguration();
-    }
-    
-    function setupEventListeners() {
-        document.addEventListener('keydown', handleHotkey);
-        console.log('🎮 Обработчики событий установлены');
-    }
-    
-    function handleHotkey(event) {
-        if (event.code === 'F6') {
-            toggleClicker();
+    <!-- Add Script Section -->
+    <section id="submit" class="section section--dark">
+      <div class="container">
+        <h2 class="section-title">ДОБАВИТЬ СКРИПТ</h2>
+        <p class="section-sub">Поделитесь своим творением с сообществом</p>
+
+        <div class="form-container">
+          <form id="scriptForm">
+            <div class="form-group">
+              <label class="form-label">НАЗВАНИЕ СКРИПТА</label>
+              <input type="text" class="form-input" placeholder="Введите понятное название" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ОПИСАНИЕ</label>
+              <textarea class="form-textarea" placeholder="Опишите что делает ваш скрипт, для чего он предназначен..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">КОД СКРИПТА</label>
+              <textarea class="form-textarea code-editor" placeholder="Вставьте код вашего скрипта здесь..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ТЕГИ (через запятую)</label>
+              <input type="text" class="form-input" placeholder="автоматизация, игры, полезное">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">КАТЕГОРИЯ</label>
+              <select class="form-select">
+                <option value="automation">⚡ Автоматизация</option>
+                <option value="game">🎮 Игровые скрипты</option>
+                <option value="web">🌐 Веб-разработка</option>
+                <option value="utility">🛠️ Утилиты</option>
+              </select>
+            </div>
+
+            <button type="submit" class="download-btn" style="width: 100%; text-align: center;">
+              🚀 ОПУБЛИКОВАТЬ СКРИПТ
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="stats" class="section">
+      <div class="container">
+        <h2 class="section-title">СТАТИСТИКА ПЛАТФОРМЫ</h2>
+        <p class="section-sub">Мы растем вместе с нашим сообществом</p>
+
+        <div class="admin-stats">
+          <div class="stat-card">
+            <h3>ВСЕГО СКРИПТОВ</h3>
+            <span id="totalScripts">1,247</span>
+          </div>
+          <div class="stat-card">
+            <h3>РАЗРАБОТЧИКОВ</h3>
+            <span id="totalUsers">589</span>
+          </div>
+          <div class="stat-card">
+            <h3>ЗАГРУЗОК</h3>
+            <span id="totalDownloads">12,458</span>
+          </div>
+          <div class="stat-card">
+            <h3>ЛАЙКОВ</h3>
+            <span id="totalLikes">8,742</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand__logo" style="background: linear-gradient(45deg, #3AA655, #47c96a);"></div>
+        <p>ScriptHub © 2024</p>
+        <p class="muted">Платформа для разработчиков</p>
+      </div>
+
+      <div>
+        <h5 style="font-family: var(--ff-heading); font-size: 12px;">ССЫЛКИ</h5>
+        <a href="#home">Главная</a><br>
+        <a href="#scripts">Скрипты</a><br>
+        <a href="#submit">Добавить</a>
+      </div>
+
+      <div>
+        <h5 style="font-family: var(--ff-heading); font-size: 12px;">СООБЩЕСТВО</h5>
+        <a href="https://github.com" target="_blank">GitHub</a><br>
+        <a href="https://discord.com" target="_blank">Discord</a><br>
+        <a href="https://t.me" target="_blank">Telegram</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">Built with ♥ — ScriptHub • <span class="muted">For developers, by developers</span></div>
+    </div>
+  </footer>
+
+  <script>
+    // Enhanced functionality for ScriptHub
+    document.addEventListener('DOMContentLoaded', function() {
+      // Header scroll effect
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.site-header');
+        if (window.scrollY > 100) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
         }
-    }
-    
-    function toggleClicker() {
-        // Логика переключения кликера
-        console.log('🔘 Переключение режима автокликера');
-    }
-    
-    return {
-        init: initialize
-    };
-}
+      });
 
-const clicker = new SmartAutoClicker();
-clicker.init();`,
-                            author: "AI_Developer_Pro",
-                            tags: ["autoclicker", "automation", "ai", "game", "smart"],
-                            likes: 256,
-                            views: 4251,
-                            rating: 4.9,
-                            date: new Date().toISOString(),
-                            category: "automation"
-                        },
-                        {
-                            id: this.generateId(),
-                            title: "AI Помощник для чата с NLP",
-                            description: "Интеллектуальный бот для автоматизации ответов в чате с использованием Natural Language Processing. Анализирует контекст сообщений, обучается на основе истории диалогов и предоставляет релевантные ответы.",
-                            code: `class AdvancedChatAssistant {
-    constructor() {
-        this.responses = new Map();
-        this.context = new Map();
-        this.learningRate = 0.8;
-        this.setupDefaultResponses();
-        this.initializeNLP();
-    }
-    
-    setupDefaultResponses() {
-        this.responses.set('привет', 'Добро пожаловать! Как я могу вам помочь?');
-        this.responses.set('помощь', 'Я могу ответить на ваши вопросы, предоставить информацию или просто пообщаться!');
-        this.responses.set('спасибо', 'Пожалуйста! Обращайтесь еще 😊');
-    }
-    
-    initializeNLP() {
-        console.log('🧠 Инициализация NLP модуля...');
-        this.loadLanguageModel();
-        this.setupSentimentAnalysis();
-    }
-    
-    async processMessage(message) {
-        const preprocessed = this.preprocessText(message);
-        const intent = await this.detectIntent(preprocessed);
-        const response = this.generateResponse(intent, message);
-        
-        this.learnFromInteraction(message, response);
-        return response;
-    }
-    
-    preprocessText(text) {
-        return text.toLowerCase()
-            .replace(/[^\\а-яёa-z0-9\\s]/g, '')
-            .trim();
-    }
-    
-    learnFromInteraction(input, output) {
-        // Машинное обучение на основе взаимодействий
-        console.log('📚 Обучение на основе нового диалога');
-    }
-}
-
-const assistant = new AdvancedChatAssistant();`,
-                            author: "ML_Expert",
-                            tags: ["ai", "chat", "bot", "nlp", "machine learning", "automation"],
-                            likes: 189,
-                            views: 3124,
-                            rating: 4.7,
-                            date: new Date(Date.now() - 86400000).toISOString(),
-                            category: "ai"
-                        },
-                        {
-                            id: this.generateId(),
-                            title: "Web Scraper Framework",
-                            description: "Мощный фреймворк для веб-скрапинга с поддержкой прокси, обходом защиты и параллельной обработкой данных. Включает в себя системы кэширования, обработки ошибок и экспорта результатов.",
-                            code: `const axios = require('axios');
-const cheerio = require('cheerio');
-const { Worker } = require('worker_threads');
-
-class WebScraperFramework {
-    constructor(config = {}) {
-        this.config = {
-            timeout: 30000,
-            retries: 3,
-            parallel: 5,
-            useProxy: false,
-            ...config
-        };
-        this.workers = [];
-        this.results = [];
-    }
-    
-    async scrape(url, selectors) {
-        try {
-            const response = await this.makeRequest(url);
-            const $ = cheerio.load(response.data);
-            const data = this.extractData($, selectors);
-            
-            this.results.push({
-                url,
-                data,
-                timestamp: new Date().toISOString()
-            });
-            
-            return data;
-        } catch (error) {
-            console.error('Ошибка скрапинга:', error);
-            throw error;
-        }
-    }
-    
-    async makeRequest(url) {
-        const options = {
-            timeout: this.config.timeout,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-        };
-        
-        return await axios.get(url, options);
-    }
-    
-    extractData($, selectors) {
-        const result = {};
-        
-        for (const [key, selector] of Object.entries(selectors)) {
-            result[key] = $(selector).text().trim();
-        }
-        
-        return result;
-    }
-}
-
-module.exports = WebScraperFramework;`,
-                            author: "DataMiner",
-                            tags: ["web scraping", "data extraction", "automation", "nodejs", "framework"],
-                            likes: 142,
-                            views: 2876,
-                            rating: 4.6,
-                            date: new Date(Date.now() - 172800000).toISOString(),
-                            category: "web"
-                        }
-                    ];
-                    this.scripts = sampleScripts;
-                    this.saveScripts();
-                }
-            }
-
-            generateId() {
-                return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-            }
-
-            addScript(scriptData) {
-                const newScript = {
-                    id: this.generateId(),
-                    ...scriptData,
-                    likes: 0,
-                    views: 0,
-                    rating: 0,
-                    date: new Date().toISOString()
-                };
-                
-                this.scripts.unshift(newScript);
-                this.saveScripts();
-                this.renderScripts();
-                this.updateStats();
-                this.renderPagination();
-                
-                return newScript;
-            }
-
-            // === СИСТЕМА РЕНДЕРИНГА ===
-            renderScripts(filteredScripts = null) {
-                const scriptsToRender = filteredScripts || this.scripts;
-                const container = document.getElementById('scriptsContainer');
-                const startIndex = (this.currentPage - 1) * this.scriptsPerPage;
-                const endIndex = startIndex + this.scriptsPerPage;
-                const scriptsForPage = scriptsToRender.slice(startIndex, endIndex);
-                
-                if (scriptsForPage.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                            <h3 style="color: #666; margin-bottom: 1rem;">📭 Скрипты не найдены</h3>
-                            <p style="color: #888;">Попробуйте изменить параметры поиска или добавьте первый скрипт!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = scriptsForPage.map(script => `
-                    <div class="script-card fade-in" data-id="${script.id}">
-                        <div class="script-header">
-                            <h3 class="script-title">${this.escapeHtml(script.title)}</h3>
-                            <span class="script-rating">⭐ ${script.rating.toFixed(1)}</span>
-                        </div>
-                        <p class="script-description">${this.escapeHtml(script.description)}</p>
-                        <div class="script-code-preview">
-                            <pre><code>${this.escapeHtml(script.code.substring(0, 200))}...</code></pre>
-                        </div>
-                        <div class="script-meta">
-                            <span>👤 ${this.escapeHtml(script.author)}</span>
-                            <span>❤️ ${script.likes}</span>
-                            <span>👁️ ${script.views}</span>
-                            <span>📅 ${this.formatDate(script.date)}</span>
-                        </div>
-                        <div class="script-tags">
-                            ${script.tags.map(tag => `<span class="tag" onclick="app.searchByTag('${this.escapeHtml(tag)}')">${this.escapeHtml(tag)}</span>`).join('')}
-                        </div>
-                        <div class="script-actions">
-                            <button class="btn btn-primary" onclick="app.viewScript('${script.id}')">
-                                <span>👁️</span>
-                                Подробнее
-                            </button>
-                            <button class="btn btn-success" onclick="app.likeScript('${script.id}')">
-                                <span>❤️</span>
-                                Лайк
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            renderPagination() {
-                const totalPages = Math.ceil(this.scripts.length / this.scriptsPerPage);
-                const paginationContainer = document.getElementById('pagination');
-                
-                if (totalPages <= 1) {
-                    paginationContainer.innerHTML = '';
-                    return;
-                }
-
-                let paginationHTML = '';
-                
-                // Кнопка "Назад"
-                if (this.currentPage > 1) {
-                    paginationHTML += `<button class="page-btn" onclick="app.changePage(${this.currentPage - 1})">‹ Назад</button>`;
-                }
-                
-                // Номера страниц
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
-                        paginationHTML += `
-                            <button class="page-btn ${i === this.currentPage ? 'active' : ''}" 
-                                    onclick="app.changePage(${i})">
-                                ${i}
-                            </button>
-                        `;
-                    } else if (i === this.currentPage - 2 || i === this.currentPage + 2) {
-                        paginationHTML += `<span class="page-dots">...</span>`;
-                    }
-                }
-                
-                // Кнопка "Вперед"
-                if (this.currentPage < totalPages) {
-                    paginationHTML += `<button class="page-btn" onclick="app.changePage(${this.currentPage + 1})">Вперед ›</button>`;
-                }
-                
-                paginationContainer.innerHTML = paginationHTML;
-            }
-
-            changePage(page) {
-                this.currentPage = page;
-                this.renderScripts();
-                this.renderPagination();
-                window.scrollTo({ top: document.getElementById('scripts').offsetTop - 100, behavior: 'smooth' });
-            }
-
-            escapeHtml(unsafe) {
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
-
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('ru-RU', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-            }
-
-            // === СИСТЕМА ПОИСКА И ФИЛЬТРАЦИИ ===
-            setupEventListeners() {
-                document.getElementById('searchInput').addEventListener('input', (e) => {
-                    this.handleSearch(e.target.value);
-                });
-
-                document.getElementById('categoryFilter').addEventListener('change', (e) => {
-                    this.handleFilter();
-                });
-
-                document.getElementById('sortFilter').addEventListener('change', (e) => {
-                    this.handleFilter();
-                });
-
-                document.getElementById('scriptForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleFormSubmit();
-                });
-            }
-
-            handleSearch(query) {
-                this.currentPage = 1;
-                
-                if (!query.trim()) {
-                    this.renderScripts();
-                    this.renderPagination();
-                    return;
-                }
-
-                const filtered = this.scripts.filter(script => 
-                    script.title.toLowerCase().includes(query.toLowerCase()) ||
-                    script.description.toLowerCase().includes(query.toLowerCase()) ||
-                    script.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
-                    script.author.toLowerCase().includes(query.toLowerCase()) ||
-                    script.code.toLowerCase().includes(query.toLowerCase())
-                );
-                
-                this.renderScripts(filtered);
-                this.renderPagination();
-            }
-
-            searchByTag(tag) {
-                document.getElementById('searchInput').value = tag;
-                this.handleSearch(tag);
-            }
-
-            handleFilter() {
-                this.currentPage = 1;
-                const category = document.getElementById('categoryFilter').value;
-                const sort = document.getElementById('sortFilter').value;
-                
-                let filtered = [...this.scripts];
-                
-                // Фильтрация по категории
-                if (category) {
-                    filtered = filtered.filter(script => script.category === category);
-                }
-                
-                // Сортировка
-                filtered.sort((a, b) => {
-                    switch(sort) {
-                        case 'newest':
-                            return new Date(b.date) - new Date(a.date);
-                        case 'popular':
-                            return b.likes - a.likes;
-                        case 'rating':
-                            return b.rating - a.rating;
-                        case 'views':
-                            return b.views - a.views;
-                        default:
-                            return 0;
-                    }
-                });
-                
-                this.renderScripts(filtered);
-                this.renderPagination();
-            }
-
-            handleFormSubmit() {
-                const formData = {
-                    title: document.getElementById('scriptTitle').value,
-                    description: document.getElementById('scriptDescription').value,
-                    code: document.getElementById('scriptCode').value,
-                    author: document.getElementById('scriptAuthor').value || "Анонимный пользователь",
-                    tags: document.getElementById('scriptTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-                    category: document.getElementById('scriptCategory').value
-                };
-
-                // Валидация
-                const errors = this.validateScript(formData);
-                if (errors.length > 0) {
-                    this.showNotification(errors.join(', '), 'error');
-                    return;
-                }
-
-                const newScript = this.addScript(formData);
-                
-                // Сброс формы
-                document.getElementById('scriptForm').reset();
-                
-                // Показать уведомление
-                this.showNotification('🎉 Скрипт успешно добавлен!', 'success');
-                
-                // Прокрутка к новому скрипту
-                setTimeout(() => {
-                    document.getElementById('scripts').scrollIntoView({ behavior: 'smooth' });
-                }, 500);
-            }
-
-            validateScript(scriptData) {
-                const errors = [];
-                
-                if (!scriptData.title || scriptData.title.length < 3) {
-                    errors.push('Название должно содержать минимум 3 символа');
-                }
-                
-                if (!scriptData.description || scriptData.description.length < 10) {
-                    errors.push('Описание должно содержать минимум 10 символов');
-                }
-                
-                if (!scriptData.code || scriptData.code.length < 10) {
-                    errors.push('Код скрипта слишком короткий');
-                }
-                
-                return errors;
-            }
-
-            // === ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
-            viewScript(scriptId) {
-                const script = this.scripts.find(s => s.id === scriptId);
-                if (script) {
-                    script.views++;
-                    this.saveScripts();
-                    this.updateStats();
-                    this.showScriptModal(script);
-                }
-            }
-
-            likeScript(scriptId) {
-                const script = this.scripts.find(s => s.id === scriptId);
-                if (script) {
-                    script.likes++;
-                    // Пересчет рейтинга на основе лайков и просмотров
-                    script.rating = (script.likes / Math.max(script.views, 1)) * 5;
-                    this.saveScripts();
-                    this.renderScripts();
-                    this.updateStats();
-                    this.showNotification('❤️ Лайк добавлен!', 'success');
-                }
-            }
-
-            showScriptModal(script) {
-                const modalHtml = `
-                    <div class="modal-overlay" onclick="app.closeModal()">
-                        <div class="modal-content" onclick="event.stopPropagation()">
-                            <div class="modal-header">
-                                <h2 class="modal-title">${this.escapeHtml(script.title)}</h2>
-                                <button class="modal-close" onclick="app.closeModal()">×</button>
-                            </div>
-                            <div class="script-details">
-                                <p><strong>Автор:</strong> ${this.escapeHtml(script.author)}</p>
-                                <p><strong>Добавлен:</strong> ${this.formatDate(script.date)}</p>
-                                <p><strong>Просмотры:</strong> ${script.views} | <strong>Лайки:</strong> ${script.likes} | <strong>Рейтинг:</strong> ⭐ ${script.rating.toFixed(1)}</p>
-                                <div class="script-tags" style="margin: 1rem 0;">
-                                    ${script.tags.map(tag => `<span class="tag">${this.escapeHtml(tag)}</span>`).join('')}
-                                </div>
-                                <h3>Описание:</h3>
-                                <p>${this.escapeHtml(script.description)}</p>
-                                <h3>Код скрипта:</h3>
-                                <div class="script-code-preview" style="max-height: 400px;">
-                                    <pre><code>${this.escapeHtml(script.code)}</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-            }
-
-            closeModal() {
-                const modal = document.querySelector('.modal-overlay');
-                if (modal) modal.remove();
-            }
-
-            showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.className = `notification notification-${type}`;
-                notification.innerHTML = `
-                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️'}</span>
-                    ${message}
-                `;
-                document.body.appendChild(notification);
-
-                setTimeout(() => {
-                    notification.style.animation = 'slideInRight 0.3s ease-out reverse';
-                    setTimeout(() => notification.remove(), 300);
-                }, 4000);
-            }
-
-            updateStats() {
-                document.getElementById('totalScripts').textContent = this.scripts.length;
-                document.getElementById('totalUsers').textContent = new Set(this.scripts.map(s => s.author)).size;
-                document.getElementById('totalLikes').textContent = this.scripts.reduce((sum, script) => sum + script.likes, 0);
-                document.getElementById('totalViews').textContent = this.scripts.reduce((sum, script) => sum + script.views, 0);
-            }
-
-            toggleTheme() {
-                document.body.classList.toggle('dark-mode');
-                const themeIcon = document.getElementById('theme-icon');
-                themeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-                localStorage.setItem('scriptHub_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-            }
-
-            loadTheme() {
-                const savedTheme = localStorage.getItem('scriptHub_theme') || 'light';
-                if (savedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    document.getElementById('theme-icon').textContent = '☀️';
-                }
-            }
-        }
-
-        // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
-        const app = {
-            init() {
-                this.scriptManager = new ScriptManager();
-                this.scriptManager.loadTheme();
-                
-                console.log('🚀 ScriptHub успешно инициализирован');
-                console.log('📊 Загружено скриптов:', this.scriptManager.scripts.length);
-            },
-
-            // Публичные методы для вызова из HTML
-            viewScript(scriptId) {
-                this.scriptManager.viewScript(scriptId);
-            },
-
-            likeScript(scriptId) {
-                this.scriptManager.likeScript(scriptId);
-            },
-
-            closeModal() {
-                this.scriptManager.closeModal();
-            },
-
-            searchByTag(tag) {
-                this.scriptManager.searchByTag(tag);
-            },
-
-            changePage(page) {
-                this.scriptManager.changePage(page);
-            },
-
-            toggleTheme() {
-                this.scriptManager.toggleTheme();
-            }
-        };
-
-        // Запуск приложения после загрузки DOM
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
+      // Theme toggle
+      const themeToggler = document.getElementById('theme-toggle');
+      if (themeToggler) {
+        themeToggler.addEventListener('click', function() {
+          document.body.classList.toggle('theme-light');
+          this.textContent = document.body.classList.contains('theme-light') ? '🌙' : '🌓';
         });
+      }
 
-        // Обработка ошибок
-        window.addEventListener('error', (event) => {
-            console.error('🚨 Глобальная ошибка:', event.error);
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          // Basic search implementation
+          const searchTerm = e.target.value.toLowerCase();
+          console.log('Searching for:', searchTerm);
         });
-    </script>
+      }
+
+      // Form submission
+      const scriptForm = document.getElementById('scriptForm');
+      if (scriptForm) {
+        scriptForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          showNotification('Скрипт успешно добавлен на модерацию!', 'success');
+          this.reset();
+        });
+      }
+
+      // Download buttons
+      document.querySelectorAll('.script-actions .btn.primary').forEach(btn => {
+        btn.addEventListener('click', function() {
+          showNotification('Скрипт добавлен в вашу библиотеку!', 'success');
+        });
+      });
+
+      // Preloader
+      window.addEventListener('load', function() {
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+          setTimeout(() => {
+            preloader.classList.add('hidden');
+          }, 800);
+        }
+      });
+
+      console.log('%c🚀 ScriptHub Loaded!', 'color:#3AA655;font-size:16px;font-weight:bold;');
+    });
+
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+  </script>
 </body>
 </html>
