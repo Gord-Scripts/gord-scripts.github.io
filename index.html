@@ -5,18 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ScriptHub - Платформа для обмена скриптами</title>
     <style>
-        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ И СБРОС === */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
             --success-color: #27ae60;
             --warning-color: #f39c12;
-            --text-color: #333;
-            --bg-color: #f5f7fa;
+            --dark-color: #1a252f;
+            --light-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --bg-color: #f8f9fa;
             --card-bg: #ffffff;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --text-color: #ecf0f1;
+            --bg-color: #1a252f;
+            --card-bg: #2c3e50;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.4);
         }
 
         * {
@@ -25,12 +39,17 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             background: var(--bg-color);
             min-height: 100vh;
+            transition: var(--transition);
         }
 
         /* === КОМПОНЕНТЫ ИНТЕРФЕЙСА === */
@@ -44,11 +63,12 @@
         .navbar {
             background: var(--gradient);
             padding: 1rem 0;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         .nav-content {
@@ -59,127 +79,138 @@
 
         .logo {
             font-size: 1.8rem;
-            font-weight: bold;
+            font-weight: 800;
             color: white;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
+            align-items: center;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
-            transition: opacity 0.3s;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
         }
 
         .nav-links a:hover {
-            opacity: 0.8;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.1);
         }
 
         /* Основной контент */
         .main-content {
             margin-top: 80px;
             padding: 2rem 0;
+            min-height: calc(100vh - 80px);
         }
 
-        /* Карточки скриптов */
-        .scripts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+        /* Секция героя */
+        .hero-section {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--gradient-secondary);
+            color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .script-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #e1e8ed;
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
         }
 
-        .script-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .script-header {
-            display: flex;
-            justify-content: between;
-            align-items: start;
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
             margin-bottom: 1rem;
+            line-height: 1.2;
         }
 
-        .script-title {
+        .hero-content p {
             font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .script-description {
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        .script-meta {
+        .hero-actions {
             display: flex;
             gap: 1rem;
-            font-size: 0.9rem;
-            color: #888;
-        }
-
-        /* Формы */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: 'Courier New', monospace;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         /* Кнопки */
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 2rem;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
@@ -189,7 +220,8 @@
 
         .btn-primary:hover {
             background: #2980b9;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
         }
 
         .btn-success {
@@ -197,15 +229,437 @@
             color: white;
         }
 
-        .btn-danger {
-            background: var(--accent-color);
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
             color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Поиск и фильтры */
+        .search-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-input input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-select {
+            padding: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        /* Сетка скриптов */
+        .scripts-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .scripts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .script-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #e1e8ed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .script-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--secondary-color);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .script-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .script-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .script-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .script-rating {
+            background: var(--warning-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .script-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .script-code-preview {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .script-code-preview pre {
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .script-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .script-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .script-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e1f5fe;
+            color: #01579b;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: #b3e5fc;
+            transform: translateY(-1px);
+        }
+
+        .script-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .script-actions .btn {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Формы */
+        .form-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: 2px solid #333;
+        }
+
+        .code-editor:focus {
+            border-color: var(--secondary-color);
+        }
+
+        /* Админ-панель */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card span {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-success {
+            background: var(--success-color);
+        }
+
+        .notification-error {
+            background: var(--accent-color);
+        }
+
+        .notification-warning {
+            background: var(--warning-color);
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.3s ease-out;
+            width: 800px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: var(--transition);
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-color);
+            background: rgba(231, 76, 60, 0.1);
         }
 
         /* Анимации */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .fade-in {
@@ -213,7 +667,34 @@
         }
 
         /* Адаптивность */
+        @media (max-width: 1200px) {
+            .scripts-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
         @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .filters-row {
+                width: 100%;
+                justify-content: center;
+            }
+            
             .scripts-grid {
                 grid-template-columns: 1fr;
             }
@@ -222,12 +703,159 @@
                 display: none;
             }
             
-            .mobile-menu-btn {
-                display: block;
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-actions .btn {
+                width: 200px;
             }
         }
 
-        /* Дополнительные стили продолжаются... */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .script-card {
+                padding: 1.25rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Стили для темной темы */
+        body.dark-mode .form-input,
+        body.dark-mode .form-textarea,
+        body.dark-mode .form-select {
+            background: #2c3e50;
+            border-color: #34495e;
+            color: var(--light-color);
+        }
+
+        body.dark-mode .script-code-preview {
+            background: #0d1117;
+        }
+
+        body.dark-mode .tag {
+            background: #34495e;
+            color: var(--light-color);
+        }
+
+        /* Дополнительные утилитарные классы */
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .hidden { display: none; }
+
+        /* Стили для загрузки и состояний */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
+        /* Дополнительные стили для улучшения UX */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* Стили для пагинации */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e1e8ed;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .page-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #f8f9fa;
+        }
     </style>
 </head>
 <body>
@@ -235,12 +863,18 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-content">
-                <a href="#" class="logo">ScriptHub</a>
+                <a href="#" class="logo">
+                    <span class="logo-icon">⚡</span>
+                    ScriptHub
+                </a>
                 <ul class="nav-links">
                     <li><a href="#home">Главная</a></li>
                     <li><a href="#scripts">Скрипты</a></li>
                     <li><a href="#submit">Добавить скрипт</a></li>
-                    <li><a href="#admin">Админ-панель</a></li>
+                    <li><a href="#admin">Статистика</a></li>
+                    <button class="theme-toggle" onclick="app.toggleTheme()">
+                        <span id="theme-icon">🌙</span>
+                    </button>
                 </ul>
             </div>
         </div>
@@ -253,10 +887,16 @@
             <section id="home" class="hero-section fade-in">
                 <div class="hero-content">
                     <h1>Крупнейшая библиотека скриптов</h1>
-                    <p>Найдите идеальные решения для ваших проектов среди 10,000+ скриптов</p>
+                    <p>Найдите идеальные решения для ваших проектов среди тысяч скриптов от сообщества разработчиков</p>
                     <div class="hero-actions">
-                        <a href="#scripts" class="btn btn-primary">Найти скрипты</a>
-                        <a href="#submit" class="btn btn-success">Добавить свой</a>
+                        <a href="#scripts" class="btn btn-primary">
+                            <span>🔍</span>
+                            Найти скрипты
+                        </a>
+                        <a href="#submit" class="btn btn-outline">
+                            <span>➕</span>
+                            Добавить свой
+                        </a>
                     </div>
                 </div>
             </section>
@@ -264,18 +904,24 @@
             <!-- Поиск и фильтры -->
             <section class="search-section">
                 <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Поиск по названию, описанию или тегам..." class="form-input">
+                    <div class="search-input">
+                        <span>🔍</span>
+                        <input type="text" id="searchInput" placeholder="Поиск по названию, описанию, тегам или автору...">
+                    </div>
                     <div class="filters-row">
                         <select id="categoryFilter" class="form-select">
                             <option value="">Все категории</option>
-                            <option value="game">Игровые скрипты</option>
-                            <option value="utility">Утилиты</option>
-                            <option value="automation">Автоматизация</option>
+                            <option value="game">🎮 Игровые скрипты</option>
+                            <option value="utility">🛠️ Утилиты</option>
+                            <option value="automation">⚡ Автоматизация</option>
+                            <option value="ai">🤖 ИИ и Машинное обучение</option>
+                            <option value="web">🌐 Веб-разработка</option>
                         </select>
                         <select id="sortFilter" class="form-select">
-                            <option value="newest">Сначала новые</option>
-                            <option value="popular">По популярности</option>
-                            <option value="rating">По рейтингу</option>
+                            <option value="newest">🆕 Сначала новые</option>
+                            <option value="popular">🔥 Популярные</option>
+                            <option value="rating">⭐ По рейтингу</option>
+                            <option value="views">👁️ По просмотрам</option>
                         </select>
                     </div>
                 </div>
@@ -283,49 +929,82 @@
 
             <!-- Сетка скриптов -->
             <section id="scripts" class="scripts-section">
-                <h2>Последние скрипты</h2>
+                <h2>📜 Последние скрипты</h2>
                 <div id="scriptsContainer" class="scripts-grid">
-                    <!-- Скрипты будут загружены здесь -->
+                    <!-- Скрипты будут загружены здесь динамически -->
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- Пагинация будет сгенерирована здесь -->
                 </div>
             </section>
 
             <!-- Форма добавления скрипта -->
             <section id="submit" class="submit-section">
                 <div class="form-container">
-                    <h2>Добавить новый скрипт</h2>
+                    <h2>📝 Добавить новый скрипт</h2>
                     <form id="scriptForm" class="script-form">
                         <div class="form-group">
-                            <label class="form-label">Название скрипта</label>
-                            <input type="text" id="scriptTitle" class="form-input" required>
+                            <label for="scriptTitle" class="form-label">Название скрипта *</label>
+                            <input type="text" id="scriptTitle" class="form-input" required 
+                                   placeholder="Введите понятное название скрипта">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Описание</label>
-                            <textarea id="scriptDescription" class="form-textarea" required></textarea>
+                            <label for="scriptDescription" class="form-label">Описание *</label>
+                            <textarea id="scriptDescription" class="form-textarea" required
+                                      placeholder="Опишите что делает ваш скрипт, для чего он предназначен..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Код скрипта</label>
-                            <textarea id="scriptCode" class="form-textarea code-editor" required></textarea>
+                            <label for="scriptCode" class="form-label">Код скрипта *</label>
+                            <textarea id="scriptCode" class="form-textarea code-editor" required
+                                      placeholder="Вставьте код вашего скрипта здесь..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Теги (через запятую)</label>
-                            <input type="text" id="scriptTags" class="form-input" placeholder="автокликер, игра, полезное">
+                            <label for="scriptAuthor" class="form-label">Автор</label>
+                            <input type="text" id="scriptAuthor" class="form-input" 
+                                   placeholder="Ваше имя или псевдоним">
                         </div>
-                        <button type="submit" class="btn btn-primary">Опубликовать скрипт</button>
+                        <div class="form-group">
+                            <label for="scriptTags" class="form-label">Теги (через запятую)</label>
+                            <input type="text" id="scriptTags" class="form-input" 
+                                   placeholder="автокликер, игра, полезное, автоматизация">
+                        </div>
+                        <div class="form-group">
+                            <label for="scriptCategory" class="form-label">Категория</label>
+                            <select id="scriptCategory" class="form-select">
+                                <option value="utility">🛠️ Утилиты</option>
+                                <option value="game">🎮 Игровые скрипты</option>
+                                <option value="automation">⚡ Автоматизация</option>
+                                <option value="ai">🤖 ИИ и Машинное обучение</option>
+                                <option value="web">🌐 Веб-разработка</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <span>🚀</span>
+                            Опубликовать скрипт
+                        </button>
                     </form>
                 </div>
             </section>
 
-            <!-- Админ-панель -->
+            <!-- Статистика -->
             <section id="admin" class="admin-section">
-                <h2>Администрирование</h2>
+                <h2 class="text-center">📊 Статистика платформы</h2>
                 <div class="admin-stats">
                     <div class="stat-card">
                         <h3>Всего скриптов</h3>
                         <span id="totalScripts">0</span>
                     </div>
                     <div class="stat-card">
-                        <h3>Пользователей</h3>
+                        <h3>Уникальных авторов</h3>
                         <span id="totalUsers">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Всего лайков</h3>
+                        <span id="totalLikes">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Просмотров</h3>
+                        <span id="totalViews">0</span>
                     </div>
                 </div>
             </section>
@@ -337,6 +1016,8 @@
         class ScriptManager {
             constructor() {
                 this.scripts = this.loadScripts();
+                this.currentPage = 1;
+                this.scriptsPerPage = 9;
                 this.init();
             }
 
@@ -345,46 +1026,207 @@
                 this.renderScripts();
                 this.setupEventListeners();
                 this.updateStats();
+                this.renderPagination();
             }
 
             loadScripts() {
-                const stored = localStorage.getItem('scriptHub_scripts');
-                return stored ? JSON.parse(stored) : [];
+                try {
+                    const stored = localStorage.getItem('scriptHub_scripts');
+                    return stored ? JSON.parse(stored) : [];
+                } catch (error) {
+                    console.error('Ошибка загрузки скриптов:', error);
+                    return [];
+                }
             }
 
             saveScripts() {
-                localStorage.setItem('scriptHub_scripts', JSON.stringify(this.scripts));
+                try {
+                    localStorage.setItem('scriptHub_scripts', JSON.stringify(this.scripts));
+                } catch (error) {
+                    console.error('Ошибка сохранения скриптов:', error);
+                }
             }
 
-            // Генерация тестовых данных для демонстрации
             generateSampleData() {
                 if (this.scripts.length === 0) {
                     const sampleScripts = [
                         {
                             id: this.generateId(),
-                            title: "Умный автокликер v2.0",
-                            description: "Продвинутый автокликер с настройкой интервалов и горячими клавишами",
-                            code: "function autoClicker() {\n  // Конфигурация\n  const config = {\n    interval: 100,\n    hotkey: 'F6'\n  };\n  \n  setInterval(() => {\n    mouseClick();\n  }, config.interval);\n}",
-                            author: "ScriptMaster",
-                            tags: ["autoclicker", "automation", "game"],
-                            likes: 142,
-                            views: 2547,
-                            rating: 4.8,
+                            title: "Умный автокликер v3.0",
+                            description: "Продвинутый автокликер с искусственным интеллектом, настройкой интервалов, горячими клавишами и системой распознавания элементов интерфейса. Поддерживает сложные сценарии кликов и адаптивные алгоритмы работы.",
+                            code: `function SmartAutoClicker() {
+    const config = {
+        interval: 100,
+        hotkey: 'F6',
+        smartDetection: true,
+        maxClicks: 1000,
+        adaptiveMode: true
+    };
+    
+    let clickCount = 0;
+    
+    function initialize() {
+        console.log('🚀 Умный автокликер инициализирован');
+        setupEventListeners();
+        loadConfiguration();
+    }
+    
+    function setupEventListeners() {
+        document.addEventListener('keydown', handleHotkey);
+        console.log('🎮 Обработчики событий установлены');
+    }
+    
+    function handleHotkey(event) {
+        if (event.code === 'F6') {
+            toggleClicker();
+        }
+    }
+    
+    function toggleClicker() {
+        // Логика переключения кликера
+        console.log('🔘 Переключение режима автокликера');
+    }
+    
+    return {
+        init: initialize
+    };
+}
+
+const clicker = new SmartAutoClicker();
+clicker.init();`,
+                            author: "AI_Developer_Pro",
+                            tags: ["autoclicker", "automation", "ai", "game", "smart"],
+                            likes: 256,
+                            views: 4251,
+                            rating: 4.9,
                             date: new Date().toISOString(),
-                            category: "game"
+                            category: "automation"
                         },
                         {
                             id: this.generateId(),
-                            title: "AI Помощник для чата",
-                            description: "Интеллектуальный бот для автоматизации ответов в чате",
-                            code: "class ChatAssistant {\n  constructor() {\n    this.responses = new Map();\n    this.setupDefaultResponses();\n  }\n  \n  setupDefaultResponses() {\n    this.responses.set('привет', 'Добро пожаловать!');\n    this.responses.set('помощь', 'Чем могу помочь?');\n  }\n}",
-                            author: "AI_Developer",
-                            tags: ["ai", "chat", "bot", "automation"],
-                            likes: 89,
-                            views: 1563,
-                            rating: 4.5,
+                            title: "AI Помощник для чата с NLP",
+                            description: "Интеллектуальный бот для автоматизации ответов в чате с использованием Natural Language Processing. Анализирует контекст сообщений, обучается на основе истории диалогов и предоставляет релевантные ответы.",
+                            code: `class AdvancedChatAssistant {
+    constructor() {
+        this.responses = new Map();
+        this.context = new Map();
+        this.learningRate = 0.8;
+        this.setupDefaultResponses();
+        this.initializeNLP();
+    }
+    
+    setupDefaultResponses() {
+        this.responses.set('привет', 'Добро пожаловать! Как я могу вам помочь?');
+        this.responses.set('помощь', 'Я могу ответить на ваши вопросы, предоставить информацию или просто пообщаться!');
+        this.responses.set('спасибо', 'Пожалуйста! Обращайтесь еще 😊');
+    }
+    
+    initializeNLP() {
+        console.log('🧠 Инициализация NLP модуля...');
+        this.loadLanguageModel();
+        this.setupSentimentAnalysis();
+    }
+    
+    async processMessage(message) {
+        const preprocessed = this.preprocessText(message);
+        const intent = await this.detectIntent(preprocessed);
+        const response = this.generateResponse(intent, message);
+        
+        this.learnFromInteraction(message, response);
+        return response;
+    }
+    
+    preprocessText(text) {
+        return text.toLowerCase()
+            .replace(/[^\\а-яёa-z0-9\\s]/g, '')
+            .trim();
+    }
+    
+    learnFromInteraction(input, output) {
+        // Машинное обучение на основе взаимодействий
+        console.log('📚 Обучение на основе нового диалога');
+    }
+}
+
+const assistant = new AdvancedChatAssistant();`,
+                            author: "ML_Expert",
+                            tags: ["ai", "chat", "bot", "nlp", "machine learning", "automation"],
+                            likes: 189,
+                            views: 3124,
+                            rating: 4.7,
                             date: new Date(Date.now() - 86400000).toISOString(),
-                            category: "utility"
+                            category: "ai"
+                        },
+                        {
+                            id: this.generateId(),
+                            title: "Web Scraper Framework",
+                            description: "Мощный фреймворк для веб-скрапинга с поддержкой прокси, обходом защиты и параллельной обработкой данных. Включает в себя системы кэширования, обработки ошибок и экспорта результатов.",
+                            code: `const axios = require('axios');
+const cheerio = require('cheerio');
+const { Worker } = require('worker_threads');
+
+class WebScraperFramework {
+    constructor(config = {}) {
+        this.config = {
+            timeout: 30000,
+            retries: 3,
+            parallel: 5,
+            useProxy: false,
+            ...config
+        };
+        this.workers = [];
+        this.results = [];
+    }
+    
+    async scrape(url, selectors) {
+        try {
+            const response = await this.makeRequest(url);
+            const $ = cheerio.load(response.data);
+            const data = this.extractData($, selectors);
+            
+            this.results.push({
+                url,
+                data,
+                timestamp: new Date().toISOString()
+            });
+            
+            return data;
+        } catch (error) {
+            console.error('Ошибка скрапинга:', error);
+            throw error;
+        }
+    }
+    
+    async makeRequest(url) {
+        const options = {
+            timeout: this.config.timeout,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        };
+        
+        return await axios.get(url, options);
+    }
+    
+    extractData($, selectors) {
+        const result = {};
+        
+        for (const [key, selector] of Object.entries(selectors)) {
+            result[key] = $(selector).text().trim();
+        }
+        
+        return result;
+    }
+}
+
+module.exports = WebScraperFramework;`,
+                            author: "DataMiner",
+                            tags: ["web scraping", "data extraction", "automation", "nodejs", "framework"],
+                            likes: 142,
+                            views: 2876,
+                            rating: 4.6,
+                            date: new Date(Date.now() - 172800000).toISOString(),
+                            category: "web"
                         }
                     ];
                     this.scripts = sampleScripts;
@@ -393,7 +1235,7 @@
             }
 
             generateId() {
-                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
             }
 
             addScript(scriptData) {
@@ -405,10 +1247,13 @@
                     rating: 0,
                     date: new Date().toISOString()
                 };
+                
                 this.scripts.unshift(newScript);
                 this.saveScripts();
                 this.renderScripts();
                 this.updateStats();
+                this.renderPagination();
+                
                 return newScript;
             }
 
@@ -416,36 +1261,96 @@
             renderScripts(filteredScripts = null) {
                 const scriptsToRender = filteredScripts || this.scripts;
                 const container = document.getElementById('scriptsContainer');
+                const startIndex = (this.currentPage - 1) * this.scriptsPerPage;
+                const endIndex = startIndex + this.scriptsPerPage;
+                const scriptsForPage = scriptsToRender.slice(startIndex, endIndex);
                 
-                if (scriptsToRender.length === 0) {
-                    container.innerHTML = '<div class="no-results">Скрипты не найдены</div>';
+                if (scriptsForPage.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                            <h3 style="color: #666; margin-bottom: 1rem;">📭 Скрипты не найдены</h3>
+                            <p style="color: #888;">Попробуйте изменить параметры поиска или добавьте первый скрипт!</p>
+                        </div>
+                    `;
                     return;
                 }
 
-                container.innerHTML = scriptsToRender.map(script => `
+                container.innerHTML = scriptsForPage.map(script => `
                     <div class="script-card fade-in" data-id="${script.id}">
                         <div class="script-header">
                             <h3 class="script-title">${this.escapeHtml(script.title)}</h3>
-                            <span class="script-rating">⭐ ${script.rating}</span>
+                            <span class="script-rating">⭐ ${script.rating.toFixed(1)}</span>
                         </div>
                         <p class="script-description">${this.escapeHtml(script.description)}</p>
                         <div class="script-code-preview">
-                            <pre><code>${this.escapeHtml(script.code.substring(0, 150))}...</code></pre>
+                            <pre><code>${this.escapeHtml(script.code.substring(0, 200))}...</code></pre>
                         </div>
                         <div class="script-meta">
                             <span>👤 ${this.escapeHtml(script.author)}</span>
                             <span>❤️ ${script.likes}</span>
                             <span>👁️ ${script.views}</span>
+                            <span>📅 ${this.formatDate(script.date)}</span>
                         </div>
                         <div class="script-tags">
-                            ${script.tags.map(tag => `<span class="tag">${this.escapeHtml(tag)}</span>`).join('')}
+                            ${script.tags.map(tag => `<span class="tag" onclick="app.searchByTag('${this.escapeHtml(tag)}')">${this.escapeHtml(tag)}</span>`).join('')}
                         </div>
                         <div class="script-actions">
-                            <button class="btn btn-primary" onclick="app.viewScript('${script.id}')">Подробнее</button>
-                            <button class="btn btn-success" onclick="app.likeScript('${script.id}')">Лайк</button>
+                            <button class="btn btn-primary" onclick="app.viewScript('${script.id}')">
+                                <span>👁️</span>
+                                Подробнее
+                            </button>
+                            <button class="btn btn-success" onclick="app.likeScript('${script.id}')">
+                                <span>❤️</span>
+                                Лайк
+                            </button>
                         </div>
                     </div>
                 `).join('');
+            }
+
+            renderPagination() {
+                const totalPages = Math.ceil(this.scripts.length / this.scriptsPerPage);
+                const paginationContainer = document.getElementById('pagination');
+                
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+
+                let paginationHTML = '';
+                
+                // Кнопка "Назад"
+                if (this.currentPage > 1) {
+                    paginationHTML += `<button class="page-btn" onclick="app.changePage(${this.currentPage - 1})">‹ Назад</button>`;
+                }
+                
+                // Номера страниц
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
+                        paginationHTML += `
+                            <button class="page-btn ${i === this.currentPage ? 'active' : ''}" 
+                                    onclick="app.changePage(${i})">
+                                ${i}
+                            </button>
+                        `;
+                    } else if (i === this.currentPage - 2 || i === this.currentPage + 2) {
+                        paginationHTML += `<span class="page-dots">...</span>`;
+                    }
+                }
+                
+                // Кнопка "Вперед"
+                if (this.currentPage < totalPages) {
+                    paginationHTML += `<button class="page-btn" onclick="app.changePage(${this.currentPage + 1})">Вперед ›</button>`;
+                }
+                
+                paginationContainer.innerHTML = paginationHTML;
+            }
+
+            changePage(page) {
+                this.currentPage = page;
+                this.renderScripts();
+                this.renderPagination();
+                window.scrollTo({ top: document.getElementById('scripts').offsetTop - 100, behavior: 'smooth' });
             }
 
             escapeHtml(unsafe) {
@@ -455,6 +1360,15 @@
                     .replace(/>/g, "&gt;")
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#039;");
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
             }
 
             // === СИСТЕМА ПОИСКА И ФИЛЬТРАЦИИ ===
@@ -467,6 +1381,10 @@
                     this.handleFilter();
                 });
 
+                document.getElementById('sortFilter').addEventListener('change', (e) => {
+                    this.handleFilter();
+                });
+
                 document.getElementById('scriptForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.handleFormSubmit();
@@ -474,8 +1392,11 @@
             }
 
             handleSearch(query) {
+                this.currentPage = 1;
+                
                 if (!query.trim()) {
                     this.renderScripts();
+                    this.renderPagination();
                     return;
                 }
 
@@ -483,18 +1404,27 @@
                     script.title.toLowerCase().includes(query.toLowerCase()) ||
                     script.description.toLowerCase().includes(query.toLowerCase()) ||
                     script.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
-                    script.author.toLowerCase().includes(query.toLowerCase())
+                    script.author.toLowerCase().includes(query.toLowerCase()) ||
+                    script.code.toLowerCase().includes(query.toLowerCase())
                 );
+                
                 this.renderScripts(filtered);
+                this.renderPagination();
+            }
+
+            searchByTag(tag) {
+                document.getElementById('searchInput').value = tag;
+                this.handleSearch(tag);
             }
 
             handleFilter() {
-                // Реализация сложной фильтрации
+                this.currentPage = 1;
                 const category = document.getElementById('categoryFilter').value;
                 const sort = document.getElementById('sortFilter').value;
                 
                 let filtered = [...this.scripts];
                 
+                // Фильтрация по категории
                 if (category) {
                     filtered = filtered.filter(script => script.category === category);
                 }
@@ -508,12 +1438,15 @@
                             return b.likes - a.likes;
                         case 'rating':
                             return b.rating - a.rating;
+                        case 'views':
+                            return b.views - a.views;
                         default:
                             return 0;
                     }
                 });
                 
                 this.renderScripts(filtered);
+                this.renderPagination();
             }
 
             handleFormSubmit() {
@@ -521,18 +1454,48 @@
                     title: document.getElementById('scriptTitle').value,
                     description: document.getElementById('scriptDescription').value,
                     code: document.getElementById('scriptCode').value,
-                    author: "Анонимный пользователь",
-                    tags: document.getElementById('scriptTags').value.split(',').map(tag => tag.trim()),
-                    category: "utility"
+                    author: document.getElementById('scriptAuthor').value || "Анонимный пользователь",
+                    tags: document.getElementById('scriptTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                    category: document.getElementById('scriptCategory').value
                 };
 
-                this.addScript(formData);
+                // Валидация
+                const errors = this.validateScript(formData);
+                if (errors.length > 0) {
+                    this.showNotification(errors.join(', '), 'error');
+                    return;
+                }
+
+                const newScript = this.addScript(formData);
                 
                 // Сброс формы
                 document.getElementById('scriptForm').reset();
                 
                 // Показать уведомление
-                this.showNotification('Скрипт успешно добавлен!', 'success');
+                this.showNotification('🎉 Скрипт успешно добавлен!', 'success');
+                
+                // Прокрутка к новому скрипту
+                setTimeout(() => {
+                    document.getElementById('scripts').scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+            }
+
+            validateScript(scriptData) {
+                const errors = [];
+                
+                if (!scriptData.title || scriptData.title.length < 3) {
+                    errors.push('Название должно содержать минимум 3 символа');
+                }
+                
+                if (!scriptData.description || scriptData.description.length < 10) {
+                    errors.push('Описание должно содержать минимум 10 символов');
+                }
+                
+                if (!scriptData.code || scriptData.code.length < 10) {
+                    errors.push('Код скрипта слишком короткий');
+                }
+                
+                return errors;
             }
 
             // === ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
@@ -541,6 +1504,7 @@
                 if (script) {
                     script.views++;
                     this.saveScripts();
+                    this.updateStats();
                     this.showScriptModal(script);
                 }
             }
@@ -549,22 +1513,37 @@
                 const script = this.scripts.find(s => s.id === scriptId);
                 if (script) {
                     script.likes++;
-                    // Пересчет рейтинга
-                    script.rating = (script.likes / (script.views || 1)) * 5;
+                    // Пересчет рейтинга на основе лайков и просмотров
+                    script.rating = (script.likes / Math.max(script.views, 1)) * 5;
                     this.saveScripts();
                     this.renderScripts();
-                    this.showNotification('Лайк добавлен!', 'success');
+                    this.updateStats();
+                    this.showNotification('❤️ Лайк добавлен!', 'success');
                 }
             }
 
             showScriptModal(script) {
-                // Реализация модального окна для просмотра скрипта
                 const modalHtml = `
-                    <div class="modal-overlay">
-                        <div class="modal-content">
-                            <h2>${this.escapeHtml(script.title)}</h2>
-                            <pre><code>${this.escapeHtml(script.code)}</code></pre>
-                            <button onclick="app.closeModal()">Закрыть</button>
+                    <div class="modal-overlay" onclick="app.closeModal()">
+                        <div class="modal-content" onclick="event.stopPropagation()">
+                            <div class="modal-header">
+                                <h2 class="modal-title">${this.escapeHtml(script.title)}</h2>
+                                <button class="modal-close" onclick="app.closeModal()">×</button>
+                            </div>
+                            <div class="script-details">
+                                <p><strong>Автор:</strong> ${this.escapeHtml(script.author)}</p>
+                                <p><strong>Добавлен:</strong> ${this.formatDate(script.date)}</p>
+                                <p><strong>Просмотры:</strong> ${script.views} | <strong>Лайки:</strong> ${script.likes} | <strong>Рейтинг:</strong> ⭐ ${script.rating.toFixed(1)}</p>
+                                <div class="script-tags" style="margin: 1rem 0;">
+                                    ${script.tags.map(tag => `<span class="tag">${this.escapeHtml(tag)}</span>`).join('')}
+                                </div>
+                                <h3>Описание:</h3>
+                                <p>${this.escapeHtml(script.description)}</p>
+                                <h3>Код скрипта:</h3>
+                                <div class="script-code-preview" style="max-height: 400px;">
+                                    <pre><code>${this.escapeHtml(script.code)}</code></pre>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -578,75 +1557,40 @@
             }
 
             showNotification(message, type) {
-                // Система уведомлений
                 const notification = document.createElement('div');
                 notification.className = `notification notification-${type}`;
-                notification.textContent = message;
+                notification.innerHTML = `
+                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️'}</span>
+                    ${message}
+                `;
                 document.body.appendChild(notification);
 
                 setTimeout(() => {
-                    notification.remove();
-                }, 3000);
+                    notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
             }
 
             updateStats() {
                 document.getElementById('totalScripts').textContent = this.scripts.length;
                 document.getElementById('totalUsers').textContent = new Set(this.scripts.map(s => s.author)).size;
-            }
-        }
-
-        // === ДОПОЛНИТЕЛЬНЫЕ МОДУЛИ И СИСТЕМЫ ===
-        // Модуль аналитики
-        class AnalyticsModule {
-            constructor() {
-                this.trackPageView();
+                document.getElementById('totalLikes').textContent = this.scripts.reduce((sum, script) => sum + script.likes, 0);
+                document.getElementById('totalViews').textContent = this.scripts.reduce((sum, script) => sum + script.views, 0);
             }
 
-            trackPageView() {
-                console.log('Аналитика: просмотр страницы');
+            toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                const themeIcon = document.getElementById('theme-icon');
+                themeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                localStorage.setItem('scriptHub_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
             }
 
-            trackScriptView(scriptId) {
-                console.log(`Аналитика: просмотр скрипта ${scriptId}`);
-            }
-        }
-
-        // Модуль валидации
-        class ValidationModule {
-            static validateScript(scriptData) {
-                const errors = [];
-                
-                if (!scriptData.title || scriptData.title.length < 3) {
-                    errors.push('Название должно содержать минимум 3 символа');
+            loadTheme() {
+                const savedTheme = localStorage.getItem('scriptHub_theme') || 'light';
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('theme-icon').textContent = '☀️';
                 }
-                
-                if (!scriptData.code || scriptData.code.length < 10) {
-                    errors.push('Код скрипта слишком короткий');
-                }
-                
-                return errors;
-            }
-        }
-
-        // Система тегов
-        class TagSystem {
-            constructor() {
-                this.popularTags = this.calculatePopularTags();
-            }
-
-            calculatePopularTags() {
-                // Сложная логика расчета популярных тегов
-                const tagCounts = {};
-                app.scriptManager.scripts.forEach(script => {
-                    script.tags.forEach(tag => {
-                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                    });
-                });
-                
-                return Object.entries(tagCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 10)
-                    .map(([tag]) => tag);
             }
         }
 
@@ -654,10 +1598,10 @@
         const app = {
             init() {
                 this.scriptManager = new ScriptManager();
-                this.analytics = new AnalyticsModule();
-                this.tagSystem = new TagSystem();
+                this.scriptManager.loadTheme();
                 
-                console.log('ScriptHub инициализирован');
+                console.log('🚀 ScriptHub успешно инициализирован');
+                console.log('📊 Загружено скриптов:', this.scriptManager.scripts.length);
             },
 
             // Публичные методы для вызова из HTML
@@ -671,6 +1615,18 @@
 
             closeModal() {
                 this.scriptManager.closeModal();
+            },
+
+            searchByTag(tag) {
+                this.scriptManager.searchByTag(tag);
+            },
+
+            changePage(page) {
+                this.scriptManager.changePage(page);
+            },
+
+            toggleTheme() {
+                this.scriptManager.toggleTheme();
             }
         };
 
@@ -679,227 +1635,10 @@
             app.init();
         });
 
-        // === ДОПОЛНИТЕЛЬНЫЙ КОД ДЛЯ УВЕЛИЧЕНИЯ ОБЪЕМА ===
-        // Расширенная система утилит
-        const UtilitySystem = {
-            // Система кэширования
-            cache: new Map(),
-            
-            setCache(key, value, ttl = 300000) {
-                this.cache.set(key, {
-                    value,
-                    expiry: Date.now() + ttl
-                });
-            },
-            
-            getCache(key) {
-                const item = this.cache.get(key);
-                if (item && Date.now() < item.expiry) {
-                    return item.value;
-                }
-                this.cache.delete(key);
-                return null;
-            },
-
-            // Система форматирования
-            formatDate(date) {
-                return new Intl.DateTimeFormat('ru-RU', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }).format(new Date(date));
-            },
-
-            // Система безопасности
-            sanitizeInput(input) {
-                const div = document.createElement('div');
-                div.textContent = input;
-                return div.innerHTML;
-            }
-        };
-
-        // Генератор документации
-        class DocumentationGenerator {
-            generateAPIDocs() {
-                return {
-                    version: "1.0.0",
-                    endpoints: [
-                        {
-                            method: "GET",
-                            path: "/api/scripts",
-                            description: "Получить список скриптов"
-                        },
-                        {
-                            method: "POST", 
-                            path: "/api/scripts",
-                            description: "Добавить новый скрипт"
-                        }
-                    ]
-                };
-            }
-        }
-
-        // Продолжение дополнительных модулей и систем...
-        // [Здесь продолжается код с дополнительными функциями, модулями и системами]
-        // Для достижения 20,000+ строк добавляются:
-        // - Расширенная система комментариев
-        // - Система рейтингов и отзывов  
-        // - Модуль социальных функций
-        // - Система модерации
-        // - Advanced поиск с индексацией
-        // - Система уведомлений
-        // - Мобильная адаптация
-        // - PWA функционал
-        // - Internationalization (i18n)
-        // - Темная тема
-        // - Система плагинов
-        // - API для разработчиков
-        // - Система бэкапов
-        // - Advanced анимации
-        // - Система тестирования
-        // - Документация для каждого модуля
+        // Обработка ошибок
+        window.addEventListener('error', (event) => {
+            console.error('🚨 Глобальная ошибка:', event.error);
+        });
     </script>
-
-    <style>
-        /* ПРОДОЛЖЕНИЕ СТИЛЕЙ ДЛЯ ДОСТИЖЕНИЯ 20,000+ СТРОК */
-        
-        /* Расширенная система стилей для компонентов */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            color: white;
-            z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
-        }
-
-        .notification-success {
-            background: var(--success-color);
-        }
-
-        .notification-error {
-            background: var(--accent-color);
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: auto;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #e1f5fe;
-            color: #01579b;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin: 0.25rem;
-        }
-
-        .code-editor {
-            font-family: 'Courier New', monospace;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card span {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        /* Дополнительные стили для различных состояний */
-        .script-card.featured {
-            border-left: 4px solid var(--warning-color);
-        }
-
-        .script-card.premium {
-            border: 2px solid gold;
-            background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
-        }
-
-        /* Адаптивные стили для различных устройств */
-        @media (max-width: 1200px) {
-            .scripts-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-            
-            .search-container {
-                flex-direction: column;
-            }
-            
-            .filters-row {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-            
-            .script-card {
-                padding: 1rem;
-            }
-        }
-
-        /* Стили для темной темы */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --text-color: #f0f0f0;
-                --bg-color: #1a1a1a;
-                --card-bg: #2d2d2d;
-            }
-        }
-
-        /* Продолжение дополнительных стилей... */
-        /* [Здесь продолжаются расширенные стили для всех компонентов] */
-    </style>
 </body>
 </html>
